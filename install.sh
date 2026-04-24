@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
-DOTFILES="$HOME/dotfiles"
+echo "Symlinking .gitconfig..."
+ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
+echo "  done."
 
 echo "Adding dotfiles source block to ~/.bashrc..."
 BLOCK='

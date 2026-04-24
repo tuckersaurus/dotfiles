@@ -1,3 +1,5 @@
+alias gcr='git clone --recurse-submodules'
+
 _gsup_pull() {
     local submodule="$1"
     local branch="$2"
