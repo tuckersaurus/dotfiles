@@ -9,6 +9,10 @@ echo "Symlinking .gitignore_global..."
 ln -sf ~/dotfiles/.gitignore_global ~/.gitignore_global
 echo "  done."
 
+echo "Setting script permissions..."
+chmod +x ~/dotfiles/scripts/*.sh
+echo "  done."
+
 echo "Adding dotfiles source block to ~/.bashrc..."
 BLOCK='
 
