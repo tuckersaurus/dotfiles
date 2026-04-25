@@ -5,8 +5,13 @@ echo "Symlinking .gitconfig..."
 ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
 echo "  done."
 
+echo "Symlinking .gitignore_global..."
+ln -sf ~/dotfiles/.gitignore_global ~/.gitignore_global
+echo "  done."
+
 echo "Adding dotfiles source block to ~/.bashrc..."
 BLOCK='
+
 # --- dotfiles ---
 for f in ~/dotfiles/bash/*.sh; do
     [ -f "$f" ] && source "$f"
