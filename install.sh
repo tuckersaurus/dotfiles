@@ -5,6 +5,13 @@ echo "Symlinking .gitconfig..."
 ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
 echo "  done."
 
+echo "Symlinking Claude commands..."
+mkdir -p ~/.claude/commands
+for cmd in ~/dotfiles/claude/commands/*.md; do
+    ln -sf "$cmd" ~/.claude/commands/"$(basename "$cmd")"
+done
+echo "  done."
+
 echo "Symlinking .gitignore_global..."
 ln -sf ~/dotfiles/.gitignore_global ~/.gitignore_global
 echo "  done."
@@ -27,6 +34,19 @@ if ! grep -q "dotfiles" ~/.bashrc; then
     echo "  done."
 else
     echo "  already present, skipping."
+fi
+
+if command -v dotnet &>/dev/null; then
+    echo "Installing dotnet templates..."
+    shopt -s nullglob
+    for tmpl in ~/dotfiles/dotnet/templates/*/; do
+        dotnet new install "$tmpl"
+        echo "  installed $(basename "${tmpl%/}")"
+    done
+    shopt -u nullglob
+    echo "  done."
+else
+    echo "  dotnet not found, skipping template installation."
 fi
 
 echo "Dotfiles installed. Run: source ~/.bashrc"
