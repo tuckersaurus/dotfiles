@@ -29,4 +29,17 @@ else
     echo "  already present, skipping."
 fi
 
+if command -v dotnet &>/dev/null; then
+    echo "Installing dotnet templates..."
+    shopt -s nullglob
+    for tmpl in ~/dotfiles/dotnet/templates/*/; do
+        dotnet new install "$tmpl"
+        echo "  installed $(basename "${tmpl%/}")"
+    done
+    shopt -u nullglob
+    echo "  done."
+else
+    echo "  dotnet not found, skipping template installation."
+fi
+
 echo "Dotfiles installed. Run: source ~/.bashrc"
