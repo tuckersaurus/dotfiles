@@ -7,7 +7,9 @@ echo "  done."
 
 echo "Symlinking Claude commands..."
 mkdir -p ~/.claude/commands
-ln -sf ~/dotfiles/claude/commands/commit.md ~/.claude/commands/commit.md
+for cmd in ~/dotfiles/claude/commands/*.md; do
+    ln -sf "$cmd" ~/.claude/commands/"$(basename "$cmd")"
+done
 echo "  done."
 
 echo "Symlinking .gitignore_global..."
