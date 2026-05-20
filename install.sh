@@ -5,6 +5,11 @@ echo "Symlinking .gitconfig..."
 ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
 echo "  done."
 
+echo "Symlinking Claude commands..."
+mkdir -p ~/.claude/commands
+ln -sf ~/dotfiles/claude/commands/commit.md ~/.claude/commands/commit.md
+echo "  done."
+
 echo "Symlinking .gitignore_global..."
 ln -sf ~/dotfiles/.gitignore_global ~/.gitignore_global
 echo "  done."
