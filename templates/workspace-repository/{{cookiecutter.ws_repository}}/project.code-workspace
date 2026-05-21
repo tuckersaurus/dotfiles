@@ -1,0 +1,50 @@
+{
+  // 🗝️ - Used for the workspace configuration
+  // 🧩 - Used for solution level workspace
+  // 🚀 - Used for primary application being worked on
+  // 📚 - Used for non-launchable libraries being worked on
+  // 🔗 - Used for reference code projects
+  // ⚙️ - Used for workspace-level tools and resources
+  // 🏁 - Used for repo root references of workspace projects
+  "folders": [
+    {
+      "name": "🗝️ Workspace",
+      "path": "."
+    },
+    {
+      "name": "🚀 {{cookiecutter.source_project}}",
+      "path": "../source/{{cookiecutter.source_repo}}/dotnet/src/{{cookiecutter.source_project}}"
+    },
+    {
+      "name": "🚀 {{cookiecutter.source_project}} Postgres",
+      "path": "../source/{{cookiecutter.source_repo}}/postgres"
+    },
+    {
+      "name": "🏁 Repository : {{cookiecutter.source_repo}}",
+      "path": "../source/{{cookiecutter.source_repo}}"
+    }
+  ],
+  "settings": {
+    "files.associations": {
+      "*.cstemplate": "csharp"
+    },
+    "files.exclude": {
+      "**/.git": true,
+      "**/.DS_Store": true,
+      "**/node_modules": true,
+      "**/bin": true,
+      "**/obj": true
+    },
+    "dotnet.defaultSolution": "project.slnx",
+    "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
+    // Formatting settings
+    "[razor]": {
+      "editor.defaultFormatter": null,
+      "editor.formatOnSave": false
+    },
+    "[aspnetcorerazor]": {
+      "editor.defaultFormatter": null,
+      "editor.formatOnSave": false
+    }
+  }
+}
