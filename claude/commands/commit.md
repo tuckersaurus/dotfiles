@@ -33,10 +33,7 @@ Rules:
 
 3. Use `AskUserQuestion` to present your draft commit message and ask the user to confirm or provide changes. Show the message clearly so they can review it.
 
-4. Once confirmed, stage the relevant files (prefer specific filenames over `git add -A`) and commit using a HEREDOC with the approved message, appending the co-author line:
-   ```
-   Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
-   ```
+4. Once confirmed, stage the relevant files (prefer specific filenames over `git add -A`) and commit using a HEREDOC with the approved message.
 
 5. Run `git status` to confirm the commit succeeded.
 

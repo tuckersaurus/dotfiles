@@ -1,0 +1,43 @@
+{
+  "name": "{{cookiecutter.ws_repository}} Dev Container",
+  "dockerComposeFile": [
+    "docker-compose.yml"
+  ],
+  "service": "workspace",
+  "workspaceFolder": "/project/workspace",
+  "features": {
+    "ghcr.io/devcontainers/features/node:2.0.0": {
+      "version": "24"
+    }
+  },
+  "remoteUser": "vscode",
+  "updateRemoteUserUID": true,
+  "remoteEnv": {
+    "NUGET_AUTH_USER": "${localEnv:NUGET_AUTH_USER}",
+    "NUGET_AUTH_TOKEN": "${localEnv:NUGET_AUTH_TOKEN}",
+    "PATH": "${containerEnv:PATH}:/home/vscode/.dotnet/tools"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "ms-dotnettools.csdevkit",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "stylelint.vscode-stylelint",
+        "editorconfig.editorconfig",
+        "eamodio.gitlens",
+        "github.vscode-pull-request-github",
+        "Anthropic.claude-code"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "remote.autoForwardPorts": false
+      }
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "bash .devcontainer/post-start.sh",
+  "postAttachCommand": "bash .devcontainer/post-attach.sh"
+}
