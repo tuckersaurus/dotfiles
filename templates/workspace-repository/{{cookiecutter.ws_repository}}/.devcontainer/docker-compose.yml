@@ -9,8 +9,9 @@ services:
       - ${HOME}/projects/source/github/{{cookiecutter.source_owner}}/{{cookiecutter.source_repo}}:/project/source/{{cookiecutter.source_repo}}
       # Mount SSH keys for git push access to GitHub
       - ${HOME}/.ssh:/home/vscode/.ssh:ro
-      # Mount Claude Code auth so the container reuses host credentials
-      - ${HOME}/.claude:/home/vscode/.claude
+      # Mount only Claude Code credentials so the container reuses host auth
+      # without overriding container-local settings/commands created by install.sh
+      - ${HOME}/.claude/.credentials.json:/home/vscode/.claude/.credentials.json
     environment:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       NODE_ENV: DEVELOPMENT
