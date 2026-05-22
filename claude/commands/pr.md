@@ -43,9 +43,11 @@ Rules:
    git push -u origin HEAD
    ```
 
-6. Create the PR using a HEREDOC for the body:
+6. Create the PR using a HEREDOC for the body. `gh pr create` must run
+   from inside the repo directory — use a subshell to avoid changing the
+   working directory:
    ```
-   gh pr create --title "..." --body "..."
+   (cd <repo-root> && gh pr create --title "..." --body "...")
    ```
 
 7. Output the PR URL.
