@@ -43,11 +43,14 @@ Rules:
    git push -u origin HEAD
    ```
 
-6. Create the PR using a HEREDOC for the body. `gh pr create` must run
-   from inside the repo directory — use a subshell to avoid changing the
-   working directory:
+6. Derive the GitHub repo slug from the remote URL using:
    ```
-   (cd <repo-root> && gh pr create --title "..." --body "...")
+   git -C <repo-root> remote get-url origin
+   ```
+   Parse `owner/repo` from the result (handles both SSH and HTTPS remotes).
+   Then create the PR without changing directory:
+   ```
+   gh pr create --repo <owner>/<repo> --head <branch> --title "..." --body "..."
    ```
 
 7. Output the PR URL.

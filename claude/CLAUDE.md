@@ -41,7 +41,7 @@ Always use the predefined skills for git operations — never run these ad-hoc, 
 
 Before committing, assess whether the changes span distinct concerns. If so, suggest splitting into multiple commits and explain the proposed breakdown — let the user decide before proceeding.
 
-All repos, including `~/dotfiles`, use branches and PRs. Never commit directly to main.
+All repos, including `~/dotfiles`, use branches and PRs. Never commit directly to main. If a commit is about to land on `main`, stop and confirm with the user before proceeding — default assumption is that a branch is needed.
 
 ## Custom Skills
 

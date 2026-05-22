@@ -27,8 +27,7 @@
       "Bash(cut *)",
       "Bash(awk *)",
       "Bash(sed *)",
-      "Bash(cookiecutter *)",
-      "Bash(cd *)"
+      "Bash(cookiecutter *)"
     ]
   }
 }
