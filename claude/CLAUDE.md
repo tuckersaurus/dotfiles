@@ -43,6 +43,14 @@ Before committing, assess whether the changes span distinct concerns. If so, sug
 
 All repos, including `~/dotfiles`, use branches and PRs. Never commit directly to main.
 
+## Custom Skills
+
+Custom skills (`/commit`, `/branch`, `/pr`, and any others in `~/.claude/commands/`) were written collaboratively, so their commands are implicitly trusted:
+
+- **User-invoked skill** (`/commit`, `/branch`, etc.): run it immediately — no "are you sure" check, no permission prompts. The only interactions should be the skill's own questions (e.g. options, split-commit suggestions).
+- **Claude-invoked skill**: ask the user before invoking.
+- **Exception**: pause if there is a clear privacy concern (e.g. a command would transmit sensitive data externally).
+
 ## Commits
 
 Follow Conventional Commits for all commit messages, including ad-hoc commits (not just via `/commit`):
