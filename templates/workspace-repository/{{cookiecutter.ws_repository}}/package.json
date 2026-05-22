@@ -5,10 +5,10 @@
     "concurrently": "^9.2.1"
   },
   "workspaces": [
-    "../source/{{cookiecutter.source_repo}}/dotnet/src/{{cookiecutter.source_project}}"
+    "../source/{{cookiecutter.source_repo}}"
   ],
   "scripts": {
-    "watch:{{cookiecutter.source_package}}": "npm --workspace=@{{cookiecutter.source_owner}}/{{cookiecutter.source_package}} run watch",
-    "watch": "concurrently \"npm run watch:{{cookiecutter.source_package}}\""
+    "watch:{{cookiecutter.source_repo}}": "npm --workspace=@{{cookiecutter.source_owner}}/{{cookiecutter.source_package}} run watch:web",
+    "watch": "concurrently \"npm run watch:{{cookiecutter.source_repo}}\""
   }
 }
