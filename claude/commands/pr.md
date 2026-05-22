@@ -36,7 +36,7 @@ Rules:
 
 3. Draft a PR title (conventional commits) and description (Summary + Test plan) based on the diff and commit log.
 
-4. Use `AskUserQuestion` to show the draft title and description and ask the user to confirm or provide changes.
+4. Output the full draft title and description as plain text in the conversation so the user can read it in full. Then use `AskUserQuestion` with a simple confirm/edit choice — do not put the draft content inside the question options.
 
 5. Once confirmed, push the branch if not already on remote:
    ```

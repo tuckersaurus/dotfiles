@@ -31,7 +31,7 @@ Rules:
 
 2. Analyze the diff and draft a commit message following the format above.
 
-3. Use `AskUserQuestion` to present your draft commit message and ask the user to confirm or provide changes. Show the message clearly so they can review it.
+3. Output the draft commit message as plain text in the conversation so the user can read it in full. Then use `AskUserQuestion` with a simple confirm/edit choice — do not put the message content inside the question options.
 
 4. Once confirmed, stage the relevant files (prefer specific filenames over `git add -A`) and commit using a HEREDOC with the approved message.
 
