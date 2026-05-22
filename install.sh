@@ -6,11 +6,11 @@ ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
 echo "  done."
 
 echo "Symlinking Claude CLAUDE.md..."
-ln -sfr ~/dotfiles/claude/CLAUDE.md ~/.claude/CLAUDE.md
+ln -sf ~/dotfiles/claude/CLAUDE.md ~/.claude/CLAUDE.md
 echo "  done."
 
 echo "Symlinking Claude settings.json..."
-ln -sfr ~/dotfiles/claude/settings.json ~/.claude/settings.json
+ln -sf ~/dotfiles/claude/settings.json ~/.claude/settings.json
 echo "  done."
 
 echo "Symlinking Claude commands..."
