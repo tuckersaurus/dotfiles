@@ -49,7 +49,7 @@ The template lives at `~/dotfiles/templates/project-repository` and scaffolds a 
 
 6. Create the GitHub repo and push:
    ```bash
-   gh repo create <owner>/<repo-name> --private --source=. --remote=origin --push
+   gh repo create <owner>/<repo-name> --private --source="$HOME/projects/source/github/<owner>/<repo-name>" --remote=origin --push
    ```
    Ask the user whether the repo should be `--private` or `--public` before running if not obvious from context.
 
