@@ -6,6 +6,27 @@ Personal dotfiles and WSL development environment setup for Ubuntu 24.04 on WSL2
 
 ---
 
+## Automated Setup with Claude Code
+
+Claude Code can complete most of this guide for you. A few steps require manual action first because they happen before WSL exists or involve interactive auth flows that can't be automated.
+
+**Do these manually:**
+
+1. Complete **Step 1** (Windows Prerequisites) — WSL install, `.wslconfig`, Ubuntu distro, VS Code, Chrome, Defender exclusion
+2. Complete **Step 2** (Create User) — first Ubuntu launch, create the `tuckersaurus` user
+
+**Then open Claude Code** (VS Code → connect to WSL → Claude Code extension) and paste:
+
+```
+I've completed the Windows prerequisites and created the WSL user.
+Follow the README at ~/dotfiles/README.md and complete the rest of the setup.
+Pause when you need input from me.
+```
+
+Claude will pause for: SSH key passphrase, adding the public key to GitHub, `gh auth login` browser flow, and the token values for `~/.secrets`.
+
+---
+
 ## New Machine Setup Guide
 
 Follow these steps in order to go from a fresh Windows install to a fully configured development environment.
@@ -23,21 +44,12 @@ Run the following in PowerShell as Administrator:
 wsl --install --no-distribution
 ```
 
-Restart Windows, then:
+Restart Windows, then set WSL2 as default and create the resource limits config **before** installing the distro — `.wslconfig` is read on first launch:
 
 ```powershell
 # Step 2: ensure WSL2 is the default before installing any distro
 wsl --set-default-version 2
-# Step 3: install Ubuntu 24.04
-wsl --install -d Ubuntu-24.04
 ```
-
-Alternatively, install Ubuntu 24.04 from the Microsoft Store after the restart.
-
-#### Other Prerequisites
-
-- Install [VS Code](https://code.visualstudio.com/) on Windows
-- Install Google Chrome at the default path (`C:\Program Files\Google\Chrome\Application\chrome.exe`) — used by `wsl.sh` to set the `$BROWSER` variable and by `gh` for OAuth flows
 
 #### Configure WSL Resource Limits
 
@@ -56,7 +68,19 @@ processors=4
 swap=2GB
 ```
 
-Then run `wsl --shutdown` from PowerShell and reopen to apply.
+Now install the distro — the resource limits will apply from first launch:
+
+```powershell
+# Step 3: install Ubuntu 24.04
+wsl --install -d Ubuntu-24.04
+```
+
+Alternatively, install Ubuntu 24.04 from the Microsoft Store.
+
+#### Other Prerequisites
+
+- Install [VS Code](https://code.visualstudio.com/) on Windows
+- Install Google Chrome at the default path (`C:\Program Files\Google\Chrome\Application\chrome.exe`) — used by `wsl.sh` to set the `$BROWSER` variable and by `gh` for OAuth flows
 
 #### Add Windows Defender Exclusion
 
@@ -184,6 +208,7 @@ The installer does the following:
 - Symlinks `~/.claude/CLAUDE.md`, `settings.json`, and all `commands/*.md`
 - Injects the dotfiles source block into `~/.bashrc`
 - Installs `cookiecutter` via pip
+- Adds `~/dotfiles/scripts/` to `PATH`, providing `git-consolidate` and `git-delete` helper scripts
 
 > **.NET** is devcontainer-only — do not install it at the WSL level.
 
@@ -217,32 +242,26 @@ EOF
 
 ### 7. SSH Keys
 
-**Option A — Copy existing keys from old machine via the Windows filesystem:**
-
-```bash
-# On the old machine — copy keys to a Windows path both machines can access:
-cp ~/.ssh/id_ed25519 /mnt/c/Users/tuckersaurus/Desktop/
-cp ~/.ssh/id_ed25519.pub /mnt/c/Users/tuckersaurus/Desktop/
-
-# On the new machine — import from that path:
-mkdir -p ~/.ssh && chmod 700 ~/.ssh
-cp /mnt/c/Users/tuckersaurus/Desktop/id_ed25519 ~/.ssh/
-cp /mnt/c/Users/tuckersaurus/Desktop/id_ed25519.pub ~/.ssh/
-chmod 600 ~/.ssh/id_ed25519
-chmod 644 ~/.ssh/id_ed25519.pub
-
-# Clean up the temporary copies from Windows:
-rm /mnt/c/Users/tuckersaurus/Desktop/id_ed25519*
-```
-
-**Option B — Generate a new key:**
+Each machine gets its own SSH key. Generate a new one — don't copy keys from another machine. If a machine is decommissioned, revoke its key from all services without affecting others.
 
 ```bash
 mkdir -p ~/.ssh && chmod 700 ~/.ssh
-ssh-keygen -t ed25519 -C "sheacox82@gmail.com"
+ssh-keygen -t ed25519 -C "sheacox82@gmail.com" -a 100
 ```
 
-Then add the new public key to GitHub: https://github.com/settings/keys
+**Use a passphrase when prompted** — it protects the key if the machine is compromised. The SSH agent setup below means you only enter it once per Windows restart.
+
+`-a 100` uses 100 KDF rounds, making passphrase brute-force significantly harder.
+
+Print the public key to register on services:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+Add it to every SSH-based service this machine needs access to — one key, all targets:
+- **GitHub:** https://github.com/settings/keys (New SSH key → Authentication Key)
+- Any other hosts (VPS, other SSH servers, etc.)
 
 **Pre-populate GitHub's host key** to avoid the fingerprint prompt on first connect:
 
@@ -256,6 +275,14 @@ ssh-keyscan github.com >> ~/.ssh/known_hosts
 git -C ~/dotfiles remote set-url origin git@github.com:tuckersaurus/dotfiles.git
 ```
 
+**SSH agent** — Without an agent, every `git push` prompts for the passphrase. Install `keychain` to persist the agent across terminal sessions — you'll only enter the passphrase once per Windows restart:
+
+```bash
+sudo apt install -y keychain
+```
+
+`~/dotfiles/bash/ssh.sh` handles agent init automatically on every shell open. Open a new terminal now — you'll be prompted for your passphrase once to start the agent. All subsequent terminals will reuse it until the next Windows restart.
+
 ---
 
 ### 8. Secrets File
@@ -266,11 +293,16 @@ Create `~/.secrets` using a text editor. Avoid heredocs for secrets — they lea
 nano ~/.secrets
 ```
 
-Add the following, substituting your real token:
+Add the following, substituting your real tokens. Create a **machine-named token on GitHub for each** (e.g. `wsl-nuget-laptop01`) so individual machines can be revoked independently.
 
 ```bash
-export NUGET_AUTH_USER="tuckersaurus"
-export NUGET_AUTH_TOKEN="<GitHub PAT with read:packages>"
+# GitHub PAT — scope: read:packages
+# Used by NuGet for GitHub Packages restore
+export GITHUB_NUGET_TOKEN="..."
+
+# GitHub PAT — scopes: repo, read:org
+# Used by the GitHub MCP server in Claude Code
+export GITHUB_MCP_TOKEN="..."
 ```
 
 Save and exit (`Ctrl+O`, `Ctrl+X`), then load the secrets:
@@ -283,15 +315,12 @@ source ~/.secrets
 
 ### 9. GitHub CLI Authentication
 
-```bash
-gh auth login
-# Choose: GitHub.com → HTTPS → Login with a web browser
-```
-
-Set the browser to Chrome on Windows:
+Set the browser first so the auth flow opens in Chrome:
 
 ```bash
 gh config set browser "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
+gh auth login
+# Choose: GitHub.com → HTTPS → Login with a web browser
 ```
 
 ---
@@ -325,7 +354,17 @@ Since dotfiles already sources all `bash/*.sh` files (including `bash/node.sh`),
 1. Open VS Code from WSL: `code .`
 2. Install the **WSL extension** if not already present
 3. Install the **Claude Code extension** from the VS Code marketplace
-4. The dotfiles installer already symlinked `~/.claude/settings.json` and all custom commands — no further config needed
+4. Configure the **dotfiles feature** so VS Code automatically runs `install.sh` in every new devcontainer. Open VS Code Settings (`Ctrl+,`), search for `dotfiles`, and set:
+   - **Dotfiles: Repository** → `https://github.com/tuckersaurus/dotfiles`
+   - **Dotfiles: Install Command** → `~/dotfiles/install.sh`
+
+   Or add directly to VS Code's `settings.json` (`Ctrl+Shift+P` → "Open User Settings JSON"):
+   ```json
+   "dotfiles.repository": "https://github.com/tuckersaurus/dotfiles",
+   "dotfiles.installCommand": "~/dotfiles/install.sh"
+   ```
+
+   This ensures MCP server configs, Claude settings, and custom commands are available in all devcontainers.
 
 ---
 
@@ -366,6 +405,9 @@ ls -la ~/.gitconfig                               # should point to ~/dotfiles/.
 # GitHub CLI
 gh auth status                                    # should show logged in
 
+# SSH auth
+ssh -T git@github.com                             # expect: Hi tuckersaurus!
+
 # Docker (no sudo required)
 docker run hello-world
 
@@ -382,5 +424,9 @@ cookiecutter --version
 node --version && npm --version
 
 # Secrets
-echo $NUGET_AUTH_USER                             # should print: tuckersaurus
+echo $GITHUB_NUGET_TOKEN                          # should print the token value
+echo $GITHUB_MCP_TOKEN                            # should print the token value
+
+# MCP servers (open Claude Code and run)
+# /mcp    — should list: github, fetch (global); postgres (workspace devcontainers only)
 ```

@@ -84,3 +84,17 @@ Immediately after the version header, include a **Changes in v#** section that
 lists what changed in the current version as a short bullet list. This makes it
 easy for the user to review what was updated without reading the whole plan.
 Previous versions' change notes should be kept beneath the current one.
+
+## Environment
+
+### Dotfiles & Devcontainer Propagation
+
+VS Code is configured with `"dotfiles.repository"` and `"dotfiles.installCommand"` pointing at the `~/dotfiles` repo (`https://github.com/tuckersaurus/dotfiles`). When a new devcontainer is created, VS Code clones dotfiles and runs `install.sh`, which symlinks:
+- `~/.claude/settings.json` → `~/dotfiles/claude/settings.json`
+- `~/.claude/CLAUDE.md` → `~/dotfiles/claude/CLAUDE.md`
+- All `~/.claude/commands/*.md` → `~/dotfiles/claude/commands/*.md`
+- `~/.gitconfig`, `~/.gitignore_global`
+
+This means MCP server configs, Claude settings, and custom skills added to this dotfiles repo automatically appear in all devcontainers — **no volume mounts needed for these files**.
+
+The only volume mount is `~/.claude/.credentials.json` (auth tokens that can't be committed to the repo).

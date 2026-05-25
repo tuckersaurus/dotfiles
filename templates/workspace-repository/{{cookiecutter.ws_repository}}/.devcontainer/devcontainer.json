@@ -13,8 +13,8 @@
   "remoteUser": "vscode",
   "updateRemoteUserUID": true,
   "remoteEnv": {
-    "NUGET_AUTH_USER": "${localEnv:NUGET_AUTH_USER}",
-    "NUGET_AUTH_TOKEN": "${localEnv:NUGET_AUTH_TOKEN}",
+    "GITHUB_NUGET_TOKEN": "${localEnv:GITHUB_NUGET_TOKEN}",
+    "GITHUB_MCP_TOKEN": "${localEnv:GITHUB_MCP_TOKEN}",
     "PATH": "${containerEnv:PATH}:/home/vscode/.dotnet/tools"
   },
   "customizations": {
