@@ -184,6 +184,7 @@ The installer does the following:
 - Symlinks `~/.claude/CLAUDE.md`, `settings.json`, and all `commands/*.md`
 - Injects the dotfiles source block into `~/.bashrc`
 - Installs `cookiecutter` via pip
+- Adds `~/dotfiles/scripts/` to `PATH`, providing `git-consolidate` and `git-delete` helper scripts
 
 > **.NET** is devcontainer-only — do not install it at the WSL level.
 
@@ -217,32 +218,26 @@ EOF
 
 ### 7. SSH Keys
 
-**Option A — Copy existing keys from old machine via the Windows filesystem:**
-
-```bash
-# On the old machine — copy keys to a Windows path both machines can access:
-cp ~/.ssh/id_ed25519 /mnt/c/Users/tuckersaurus/Desktop/
-cp ~/.ssh/id_ed25519.pub /mnt/c/Users/tuckersaurus/Desktop/
-
-# On the new machine — import from that path:
-mkdir -p ~/.ssh && chmod 700 ~/.ssh
-cp /mnt/c/Users/tuckersaurus/Desktop/id_ed25519 ~/.ssh/
-cp /mnt/c/Users/tuckersaurus/Desktop/id_ed25519.pub ~/.ssh/
-chmod 600 ~/.ssh/id_ed25519
-chmod 644 ~/.ssh/id_ed25519.pub
-
-# Clean up the temporary copies from Windows:
-rm /mnt/c/Users/tuckersaurus/Desktop/id_ed25519*
-```
-
-**Option B — Generate a new key:**
+Each machine gets its own SSH key. Generate a new one — don't copy keys from another machine. If a machine is decommissioned, revoke its key from all services without affecting others.
 
 ```bash
 mkdir -p ~/.ssh && chmod 700 ~/.ssh
-ssh-keygen -t ed25519 -C "sheacox82@gmail.com"
+ssh-keygen -t ed25519 -C "sheacox82@gmail.com" -a 100
 ```
 
-Then add the new public key to GitHub: https://github.com/settings/keys
+**Use a passphrase when prompted** — it protects the key if the machine is compromised. The SSH agent setup below means you only enter it once per Windows restart.
+
+`-a 100` uses 100 KDF rounds, making passphrase brute-force significantly harder.
+
+Print the public key to register on services:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+Add it to every SSH-based service this machine needs access to — one key, all targets:
+- **GitHub:** https://github.com/settings/keys (New SSH key → Authentication Key)
+- Any other hosts (VPS, other SSH servers, etc.)
 
 **Pre-populate GitHub's host key** to avoid the fingerprint prompt on first connect:
 
@@ -255,6 +250,14 @@ ssh-keyscan github.com >> ~/.ssh/known_hosts
 ```bash
 git -C ~/dotfiles remote set-url origin git@github.com:tuckersaurus/dotfiles.git
 ```
+
+**SSH agent** — Without an agent, every `git push` prompts for the passphrase. Install `keychain` to persist the agent across terminal sessions — you'll only enter the passphrase once per Windows restart:
+
+```bash
+sudo apt install -y keychain
+```
+
+`~/dotfiles/bash/ssh.sh` handles agent init automatically on every shell open. The first terminal after a Windows restart will prompt for the passphrase once; all subsequent terminals reuse the running agent.
 
 ---
 
