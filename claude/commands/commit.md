@@ -28,13 +28,23 @@ Rules:
 1. Run these in parallel:
    - `git status` to see staged/unstaged/untracked files
    - `git diff HEAD` to see all current changes
+   - `git branch --show-current` to check the active branch
 
-2. Analyze the diff and draft a commit message following the format above.
+2. **If the current branch is `main` (or `master`):**
+   - Run `git branch --list` to find all local branches other than main
+   - If other branches exist, use `AskUserQuestion` to let the user choose:
+     - One option per existing branch (show the branch name)
+     - A final option: "Create a new branch"
+   - If no other branches exist, skip straight to the "Create a new branch" path
+   - **If the user picks an existing branch:** run `git checkout <branch>` and continue to Step 3
+   - **If the user picks "Create a new branch":** invoke the `/branch` skill now — do not create the branch any other way. After `/branch` completes, continue to Step 3.
 
-3. Output the draft commit message as plain text in the conversation so the user can read it in full. Then use `AskUserQuestion` with a simple confirm/edit choice — do not put the message content inside the question options.
+3. Analyze the diff and draft a commit message following the format above.
 
-4. Once confirmed, stage the relevant files (prefer specific filenames over `git add -A`) and commit using a HEREDOC with the approved message.
+4. Output the draft commit message as plain text in the conversation so the user can read it in full. Then use `AskUserQuestion` with a simple confirm/edit choice — do not put the message content inside the question options.
 
-5. Run `git status` to confirm the commit succeeded.
+5. Once confirmed, stage the relevant files (prefer specific filenames over `git add -A`) and commit using a HEREDOC with the approved message.
+
+6. Run `git status` to confirm the commit succeeded.
 
 Do NOT push unless explicitly asked.
