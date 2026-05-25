@@ -6,6 +6,27 @@ Personal dotfiles and WSL development environment setup for Ubuntu 24.04 on WSL2
 
 ---
 
+## Automated Setup with Claude Code
+
+Claude Code can complete most of this guide for you. A few steps require manual action first because they happen before WSL exists or involve interactive auth flows that can't be automated.
+
+**Do these manually:**
+
+1. Complete **Step 1** (Windows Prerequisites) — WSL install, `.wslconfig`, Ubuntu distro, VS Code, Chrome, Defender exclusion
+2. Complete **Step 2** (Create User) — first Ubuntu launch, create the `tuckersaurus` user
+
+**Then open Claude Code** (VS Code → connect to WSL → Claude Code extension) and paste:
+
+```
+I've completed the Windows prerequisites and created the WSL user.
+Follow the README at ~/dotfiles/README.md and complete the rest of the setup.
+Pause when you need input from me.
+```
+
+Claude will pause for: SSH key passphrase, adding the public key to GitHub, `gh auth login` browser flow, and the token values for `~/.secrets`.
+
+---
+
 ## New Machine Setup Guide
 
 Follow these steps in order to go from a fresh Windows install to a fully configured development environment.
