@@ -14,21 +14,29 @@ The template lives at `~/dotfiles/templates/project-repository` and scaffolds a 
    - "Repository name (kebab-case)" — e.g. `zombie-miner`
    - "GitHub owner" — personal (`tuckersaurus`) or an org (e.g. `debugden-net`); default `tuckersaurus`
 
-2. Confirm the four cookiecutter variables with the user before running:
+2. Ask about PostgreSQL schemas:
+
+   - Ask: "Does this project use a PostgreSQL schema?" (default: yes)
+   - If **yes**:
+     1. Ask for the first schema name (default: repo name with hyphens replaced by underscores, e.g. `zombie-miner` → `zombie_miner`)
+     2. Loop: ask "Add another schema?" (default: no). If yes, ask for the next schema name. Repeat until no.
+   - If **no**: `db_schemas` is an empty string
+
+3. Confirm the cookiecutter variables with the user before running:
    - `project_repository` → the repo name provided
    - `project_owner` → the GitHub owner provided
    - `package` → defaults to the repo name (ask only if they want to override)
-   - `db_schema` → defaults to repo name with hyphens replaced by underscores (ask only if they want to override)
+   - `db_schemas` → comma-delimited schema names (or empty string for no database)
 
    Use `AskUserQuestion` to present a summary and get confirmation before proceeding.
 
-3. The target directory is always:
+4. The target directory is always:
    ```
    ~/projects/source/github/<owner>/<repo-name>
    ```
    This is hardcoded — the command always creates the project here regardless of the current working directory.
 
-4. Run cookiecutter non-interactively using `--no-input` with explicit variable overrides, so there are no interactive prompts:
+5. Run cookiecutter non-interactively using `--no-input` with explicit variable overrides, so there are no interactive prompts:
    ```bash
    cookiecutter ~/dotfiles/templates/project-repository \
      --no-input \
@@ -36,23 +44,23 @@ The template lives at `~/dotfiles/templates/project-repository` and scaffolds a 
      project_repository=<repo-name> \
      project_owner=<owner> \
      package=<package> \
-     db_schema=<db_schema>
+     db_schemas=<schema1>,<schema2>
    ```
+   Pass `db_schemas=` (empty) when the project has no database. The Jinja2 loop in `postgres/init.sql` splits on commas and generates one `CREATE SCHEMA` per non-empty entry — no post-scaffold editing required.
 
-5. Initialize git and make the first commit:
+6. Initialize git and make the first commit:
    ```bash
-   cd ~/projects/source/github/<owner>/<repo-name>
-   git init
-   git add .
-   git commit -m "chore: initial project scaffold from template"
+   git -C ~/projects/source/github/<owner>/<repo-name> init
+   git -C ~/projects/source/github/<owner>/<repo-name> add .
+   git -C ~/projects/source/github/<owner>/<repo-name> commit -m "chore: initial project scaffold from template"
    ```
 
-6. Create the GitHub repo and push:
+7. Create the GitHub repo and push:
    ```bash
    gh repo create <owner>/<repo-name> --private --source="$HOME/projects/source/github/<owner>/<repo-name>" --remote=origin --push
    ```
    Ask the user whether the repo should be `--private` or `--public` before running if not obvious from context.
 
-7. Confirm success and print:
+8. Confirm success and print:
    - The local path (`~/projects/source/github/<owner>/<repo-name>`)
    - The GitHub URL (`https://github.com/<owner>/<repo-name>`)

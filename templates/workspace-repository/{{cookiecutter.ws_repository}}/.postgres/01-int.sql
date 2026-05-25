@@ -9,8 +9,9 @@
 CREATE USER IF NOT EXISTS :"svc_user" WITH PASSWORD :'svc_password';
 
 -- Source each project's schema definitions.
--- Add a \i line for each additional project repo this workspace references.
+-- The init.sql in each source repo may be empty (for projects with no database).
 \i /project/source/{{cookiecutter.source_repo}}/postgres/init.sql
+-- <additional-source-repos>
 
 -- Grant the service user access to every non-system schema created above.
 -- Automatically covers multiple schemas and multiple \i'd projects.
