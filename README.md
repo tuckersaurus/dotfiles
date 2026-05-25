@@ -23,21 +23,12 @@ Run the following in PowerShell as Administrator:
 wsl --install --no-distribution
 ```
 
-Restart Windows, then:
+Restart Windows, then set WSL2 as default and create the resource limits config **before** installing the distro — `.wslconfig` is read on first launch:
 
 ```powershell
 # Step 2: ensure WSL2 is the default before installing any distro
 wsl --set-default-version 2
-# Step 3: install Ubuntu 24.04
-wsl --install -d Ubuntu-24.04
 ```
-
-Alternatively, install Ubuntu 24.04 from the Microsoft Store after the restart.
-
-#### Other Prerequisites
-
-- Install [VS Code](https://code.visualstudio.com/) on Windows
-- Install Google Chrome at the default path (`C:\Program Files\Google\Chrome\Application\chrome.exe`) — used by `wsl.sh` to set the `$BROWSER` variable and by `gh` for OAuth flows
 
 #### Configure WSL Resource Limits
 
@@ -56,7 +47,19 @@ processors=4
 swap=2GB
 ```
 
-Then run `wsl --shutdown` from PowerShell and reopen to apply.
+Now install the distro — the resource limits will apply from first launch:
+
+```powershell
+# Step 3: install Ubuntu 24.04
+wsl --install -d Ubuntu-24.04
+```
+
+Alternatively, install Ubuntu 24.04 from the Microsoft Store.
+
+#### Other Prerequisites
+
+- Install [VS Code](https://code.visualstudio.com/) on Windows
+- Install Google Chrome at the default path (`C:\Program Files\Google\Chrome\Application\chrome.exe`) — used by `wsl.sh` to set the `$BROWSER` variable and by `gh` for OAuth flows
 
 #### Add Windows Defender Exclusion
 
@@ -257,7 +260,7 @@ git -C ~/dotfiles remote set-url origin git@github.com:tuckersaurus/dotfiles.git
 sudo apt install -y keychain
 ```
 
-`~/dotfiles/bash/ssh.sh` handles agent init automatically on every shell open. The first terminal after a Windows restart will prompt for the passphrase once; all subsequent terminals reuse the running agent.
+`~/dotfiles/bash/ssh.sh` handles agent init automatically on every shell open. Open a new terminal now — you'll be prompted for your passphrase once to start the agent. All subsequent terminals will reuse it until the next Windows restart.
 
 ---
 
@@ -291,15 +294,12 @@ source ~/.secrets
 
 ### 9. GitHub CLI Authentication
 
-```bash
-gh auth login
-# Choose: GitHub.com → HTTPS → Login with a web browser
-```
-
-Set the browser to Chrome on Windows:
+Set the browser first so the auth flow opens in Chrome:
 
 ```bash
 gh config set browser "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
+gh auth login
+# Choose: GitHub.com → HTTPS → Login with a web browser
 ```
 
 ---
@@ -333,7 +333,17 @@ Since dotfiles already sources all `bash/*.sh` files (including `bash/node.sh`),
 1. Open VS Code from WSL: `code .`
 2. Install the **WSL extension** if not already present
 3. Install the **Claude Code extension** from the VS Code marketplace
-4. The dotfiles installer already symlinked `~/.claude/settings.json` and all custom commands — no further config needed
+4. Configure the **dotfiles feature** so VS Code automatically runs `install.sh` in every new devcontainer. Open VS Code Settings (`Ctrl+,`), search for `dotfiles`, and set:
+   - **Dotfiles: Repository** → `https://github.com/tuckersaurus/dotfiles`
+   - **Dotfiles: Install Command** → `~/dotfiles/install.sh`
+
+   Or add directly to VS Code's `settings.json` (`Ctrl+Shift+P` → "Open User Settings JSON"):
+   ```json
+   "dotfiles.repository": "https://github.com/tuckersaurus/dotfiles",
+   "dotfiles.installCommand": "~/dotfiles/install.sh"
+   ```
+
+   This ensures MCP server configs, Claude settings, and custom commands are available in all devcontainers.
 
 ---
 
@@ -373,6 +383,9 @@ ls -la ~/.gitconfig                               # should point to ~/dotfiles/.
 
 # GitHub CLI
 gh auth status                                    # should show logged in
+
+# SSH auth
+ssh -T git@github.com                             # expect: Hi tuckersaurus!
 
 # Docker (no sudo required)
 docker run hello-world
