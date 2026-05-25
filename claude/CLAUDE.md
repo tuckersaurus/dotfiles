@@ -75,7 +75,12 @@ When writing or updating a plan file during Plan Mode, include a version header
 at the top that increments each time the plan is revised based on user comments:
 
 **Plan Version:** v1  
-**Last Updated:** <date>
+**Last Updated:** <date> <time>
 
-Bump the version number (v1 → v2 → v3) and update the date each time the plan
-is revised in response to user feedback.
+Bump the version number (v1 → v2 → v3) and update the timestamp (date + time)
+each time the plan is revised in response to user feedback.
+
+Immediately after the version header, include a **Changes in v#** section that
+lists what changed in the current version as a short bullet list. This makes it
+easy for the user to review what was updated without reading the whole plan.
+Previous versions' change notes should be kept beneath the current one.
