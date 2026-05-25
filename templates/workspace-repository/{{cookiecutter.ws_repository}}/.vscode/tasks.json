@@ -2,7 +2,30 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Run Blazor App",
+      "label": "Watch Assets",
+      "type": "shell",
+      "command": "npm run watch",
+      "problemMatcher": [],
+      "group": "build",
+      "isBackground": true,
+      "runOptions": {
+        "reevaluateOnRerun": true
+      }
+    },
+    {
+      "label": "Watch : {{cookiecutter.source_repo}}",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "watch:{{cookiecutter.source_repo}}"],
+      "problemMatcher": [],
+      "group": "build",
+      "isBackground": true,
+      "runOptions": {
+        "reevaluateOnRerun": true
+      }
+    },
+    {
+      "label": "Run {{cookiecutter.source_project}}",
       "type": "shell",
       "command": "dotnet",
       "args": [
@@ -26,24 +49,14 @@
       }
     },
     {
-      "label": "Watch Assets",
-      "type": "shell",
-      "command": "npm run watch",
-      "problemMatcher": [],
-      "group": "build",
-      "isBackground": true,
-      "runOptions": {
-        "reevaluateOnRerun": true
-      }
-    },
-    {
-      "label": "Run + Watch",
+      "label": "Run + Watch {{cookiecutter.source_project}}",
       "dependsOn": [
-        "Run Blazor App",
+        "Run {{cookiecutter.source_project}}",
         "Watch Assets"
       ],
       "dependsOrder": "parallel",
       "group": "build"
     }
+    // <additional-tasks>
   ]
 }

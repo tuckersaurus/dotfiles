@@ -7,6 +7,7 @@ services:
       - ${HOME}/projects/source/github/{{cookiecutter.workspace_owner}}/{{cookiecutter.ws_repository}}:/project/workspace
       # Mount each source repo
       - ${HOME}/projects/source/github/{{cookiecutter.source_owner}}/{{cookiecutter.source_repo}}:/project/source/{{cookiecutter.source_repo}}
+      # <additional-source-repos>
       # Mount SSH keys for git push access to GitHub
       - ${HOME}/.ssh:/home/vscode/.ssh:ro
       # Mount only Claude Code credentials so the container reuses host auth
@@ -15,7 +16,7 @@ services:
     environment:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       NODE_ENV: DEVELOPMENT
-      ConnectionStrings__DefaultConnection: "Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};Search Path=${DB_SCHEMA}"
+      ConnectionStrings__DefaultConnection: "Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}"
     depends_on:
       postgres:
         condition: service_healthy
