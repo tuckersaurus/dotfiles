@@ -1,7 +1,7 @@
 -- Schema initialization for {{cookiecutter.project_repository}}
 -- Sourced by the workspace devcontainer during database setup.
 -- User creation and access grants live in the workspace repository.
---
--- Add additional CREATE SCHEMA lines if this project spans multiple schemas.
+{%- for schema in cookiecutter.db_schemas.split(',') if schema.strip() %}
 
-CREATE SCHEMA IF NOT EXISTS {{cookiecutter.db_schema}};
+CREATE SCHEMA IF NOT EXISTS {{ schema.strip() }};
+{%- endfor %}

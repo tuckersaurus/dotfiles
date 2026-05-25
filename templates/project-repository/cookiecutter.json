@@ -2,11 +2,11 @@
   "project_repository": "my-project",
   "project_owner": "",
   "package": "{{ cookiecutter.project_repository }}",
-  "db_schema": "{{ cookiecutter.project_repository.replace('-', '_') }}",
+  "db_schemas": "",
   "__prompts__": {
     "project_repository": "Project repository name (kebab-case)",
     "project_owner": "GitHub owner of this repository",
     "package": "npm package name (kebab-case, defaults to project repository name)",
-    "db_schema": "Initial PostgreSQL schema name (snake_case, defaults to project repository name)"
+    "db_schemas": "PostgreSQL schema names (comma-separated, leave blank if no database)"
   }
 }
