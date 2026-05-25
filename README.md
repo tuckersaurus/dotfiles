@@ -266,11 +266,16 @@ Create `~/.secrets` using a text editor. Avoid heredocs for secrets — they lea
 nano ~/.secrets
 ```
 
-Add the following, substituting your real token:
+Add the following, substituting your real tokens. Create a **machine-named token on GitHub for each** (e.g. `wsl-nuget-laptop01`) so individual machines can be revoked independently.
 
 ```bash
-export NUGET_AUTH_USER="tuckersaurus"
-export NUGET_AUTH_TOKEN="<GitHub PAT with read:packages>"
+# GitHub PAT — scope: read:packages
+# Used by NuGet for GitHub Packages restore
+export GITHUB_NUGET_TOKEN="..."
+
+# GitHub PAT — scopes: repo, read:org
+# Used by the GitHub MCP server in Claude Code
+export GITHUB_MCP_TOKEN="..."
 ```
 
 Save and exit (`Ctrl+O`, `Ctrl+X`), then load the secrets:
@@ -382,5 +387,9 @@ cookiecutter --version
 node --version && npm --version
 
 # Secrets
-echo $NUGET_AUTH_USER                             # should print: tuckersaurus
+echo $GITHUB_NUGET_TOKEN                          # should print the token value
+echo $GITHUB_MCP_TOKEN                            # should print the token value
+
+# MCP servers (open Claude Code and run)
+# /mcp    — should list: github, fetch (global); postgres (workspace devcontainers only)
 ```
