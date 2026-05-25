@@ -47,6 +47,7 @@ Rules:
 5. Once a name is confirmed, run:
    ```
    git checkout -b <branch-name>
+   git push -u origin <branch-name>
    ```
 
 6. Confirm success and print the branch name.
