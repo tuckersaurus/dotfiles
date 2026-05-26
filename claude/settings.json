@@ -1,5 +1,8 @@
 {
   "effortLevel": "high",
+  "env": {
+    "BASH_ENV": "/home/tuckersaurus/.claude/bash-env.sh"
+  },
   "permissions": {
     "allow": [
       "Bash(git *)",
@@ -27,7 +30,8 @@
       "Bash(cut *)",
       "Bash(awk *)",
       "Bash(sed *)",
-      "Bash(cookiecutter *)"
+      "Bash(cookiecutter *)",
+      "Bash(sudo *)"
     ]
   },
   "mcpServers": {
