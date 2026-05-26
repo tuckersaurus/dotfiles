@@ -19,11 +19,11 @@ Claude Code can complete most of this guide for you. A few steps require manual 
 
 ```
 I've completed the Windows prerequisites and created the WSL user.
-Follow the README at ~/dotfiles/README.md and complete the rest of the setup.
+Follow the README at ~/README.md and complete the rest of the setup.
 Pause when you need input from me.
 ```
 
-Claude will pause for: SSH key passphrase, adding the public key to GitHub, `gh auth login` browser flow, and the token values for `~/.secrets`.
+Claude will pause for: adding the SSH public key to GitHub, `gh auth login` browser flow, and the token values for `~/.secrets`.
 
 ---
 
@@ -87,19 +87,18 @@ Alternatively, install Ubuntu 24.04 from the Microsoft Store.
 Defender scanning the WSL filesystem can cause significant slowdowns on large repos. Open PowerShell as Administrator:
 
 ```powershell
-Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Packages\CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc"
+Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\wsl"
 ```
-
-> The folder name includes a store ID suffix that may differ slightly. Verify with `ls $env:LOCALAPPDATA\Packages\Canonical*` and use the matching path.
 
 ---
 
 ### 2. Create User
 
-On first launch, Ubuntu runs a setup wizard. Create the user `tuckersaurus` and set a password when prompted. Confirm sudo works:
+On first launch, Ubuntu runs a setup wizard. Create the user `tuckersaurus` and set a password when prompted. Confirm sudo works and download the setup guide:
 
 ```bash
 sudo apt update
+curl -fsSL https://raw.githubusercontent.com/tuckersaurus/dotfiles/main/README.md -o ~/README.md
 ```
 
 ---
@@ -119,6 +118,28 @@ EOF
 ```
 
 Then restart WSL from PowerShell: `wsl --shutdown`, reopen.
+
+#### Passwordless Sudo for System Administration
+
+Create a sudoers entry allowing passwordless sudo for the specific commands needed for package installs, service management, and config file writes. This lets Claude handle system-level tasks without per-command password prompts:
+
+```bash
+cat << 'EOF' | sudo tee /etc/sudoers.d/admin-tasks
+tuckersaurus ALL=(ALL) NOPASSWD: \
+  /usr/bin/apt, \
+  /usr/bin/apt-get, \
+  /usr/sbin/service, \
+  /usr/bin/systemctl, \
+  /usr/sbin/usermod, \
+  /usr/bin/tee, \
+  /usr/bin/chmod, \
+  /usr/bin/chown, \
+  /usr/bin/install, \
+  /usr/bin/mkdir, \
+  /usr/bin/gpg
+EOF
+sudo chmod 440 /etc/sudoers.d/admin-tasks
+```
 
 ---
 
@@ -155,8 +176,8 @@ sudo apt update && sudo apt install gh -y
 ```bash
 sudo apt install -y ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
-  -o /etc/apt/keyrings/docker.gpg
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+  | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
   https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
@@ -167,7 +188,7 @@ sudo apt update && sudo apt install -y \
 sudo usermod -aG docker $USER
 ```
 
-Then either run `newgrp docker` (starts a new subshell with the group active) or close and reopen the terminal to pick up the new group membership.
+Restart WSL to pick up the new group membership — from PowerShell: `wsl --shutdown`, then reopen. (`newgrp docker` works in the current shell only and won't cover VS Code's server process.)
 
 #### Passwordless Docker Service Start
 
@@ -249,9 +270,9 @@ mkdir -p ~/.ssh && chmod 700 ~/.ssh
 ssh-keygen -t ed25519 -C "sheacox82@gmail.com" -a 100
 ```
 
-**Use a passphrase when prompted** — it protects the key if the machine is compromised. The SSH agent setup below means you only enter it once per Windows restart.
+**Leave the passphrase empty** — devcontainers mount `~/.ssh` directly and cannot use a passphrase-protected key without SSH agent forwarding. A passphrase-less key is still per-machine and revocable; the risk is that a compromised machine gives immediate GitHub access rather than requiring the passphrase too.
 
-`-a 100` uses 100 KDF rounds, making passphrase brute-force significantly harder.
+`-a 100` uses 100 KDF rounds for the key derivation function.
 
 Print the public key to register on services:
 
@@ -274,14 +295,6 @@ ssh-keyscan github.com >> ~/.ssh/known_hosts
 ```bash
 git -C ~/dotfiles remote set-url origin git@github.com:tuckersaurus/dotfiles.git
 ```
-
-**SSH agent** — Without an agent, every `git push` prompts for the passphrase. Install `keychain` to persist the agent across terminal sessions — you'll only enter the passphrase once per Windows restart:
-
-```bash
-sudo apt install -y keychain
-```
-
-`~/dotfiles/bash/ssh.sh` handles agent init automatically on every shell open. Open a new terminal now — you'll be prompted for your passphrase once to start the agent. All subsequent terminals will reuse it until the next Windows restart.
 
 ---
 

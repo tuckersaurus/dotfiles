@@ -27,7 +27,8 @@
       "Bash(cut *)",
       "Bash(awk *)",
       "Bash(sed *)",
-      "Bash(cookiecutter *)"
+      "Bash(cookiecutter *)",
+      "Bash(sudo *)"
     ]
   },
   "mcpServers": {
