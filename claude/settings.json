@@ -1,8 +1,5 @@
 {
   "effortLevel": "high",
-  "env": {
-    "BASH_ENV": "/home/tuckersaurus/.claude/bash-env.sh"
-  },
   "permissions": {
     "allow": [
       "Bash(git *)",
