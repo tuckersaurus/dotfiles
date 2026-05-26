@@ -1,0 +1,8 @@
+{
+  "name": "@{{cookiecutter.project_owner}}/{{cookiecutter.package}}-{{cookiecutter.source_project.split('.')[-1] | lower}}",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "watch:web": "echo \"Add web watch script here.\""
+  }
+}
