@@ -9,6 +9,7 @@ The template lives at `~/dotfiles/templates/project-repository` and scaffolds a 
    **With arguments** — parse them:
    - First arg is the repo name (kebab-case)
    - Second arg (optional) is the GitHub owner — defaults to `tuckersaurus` if omitted
+   - `source_project=<name>` (optional keyword arg) — the primary .NET project name; if omitted, the template default applies (`<PascalCase(repo)>.Web`)
 
    **Without arguments** — use `AskUserQuestion` to ask:
    - "Repository name (kebab-case)" — e.g. `zombie-miner`
@@ -26,6 +27,7 @@ The template lives at `~/dotfiles/templates/project-repository` and scaffolds a 
    - `project_repository` → the repo name provided
    - `project_owner` → the GitHub owner provided
    - `package` → defaults to the repo name (ask only if they want to override)
+   - `source_project` → the .NET project name (e.g. `ZombieMiner.Web`); if not provided as an argument, derive the default as `<PascalCase(repo)>.Web` and show it in the summary. The user can cancel and re-run with `source_project=<name>` to change it.
    - `db_schemas` → comma-delimited schema names (or empty string for no database)
 
    Use `AskUserQuestion` to present a summary and get confirmation before proceeding.
@@ -44,6 +46,7 @@ The template lives at `~/dotfiles/templates/project-repository` and scaffolds a 
      project_repository=<repo-name> \
      project_owner=<owner> \
      package=<package> \
+     source_project=<source_project> \
      db_schemas=<schema1>,<schema2>
    ```
    Pass `db_schemas=` (empty) when the project has no database. The Jinja2 loop in `postgres/init.sql` splits on commas and generates one `CREATE SCHEMA` per non-empty entry — no post-scaffold editing required.

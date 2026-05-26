@@ -28,7 +28,10 @@
       "Bash(awk *)",
       "Bash(sed *)",
       "Bash(cookiecutter *)",
-      "Bash(sudo *)"
+      "Bash(sudo *)",
+      "Bash(xargs *)",
+      "Bash(basename *)",
+      "Bash(gh repo create *)"
     ]
   },
   "mcpServers": {
