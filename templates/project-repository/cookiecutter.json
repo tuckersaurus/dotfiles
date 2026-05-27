@@ -2,13 +2,9 @@
   "project_repository": "my-project",
   "project_owner": "",
   "package": "{{ cookiecutter.project_repository }}",
-  "source_project": "{{ cookiecutter.project_repository | replace('-', ' ') | title | replace(' ', '') }}.Web",
-  "db_schemas": "",
   "__prompts__": {
     "project_repository": "Project repository name (kebab-case)",
     "project_owner": "GitHub owner of this repository",
-    "package": "npm package name (kebab-case, defaults to project repository name)",
-    "source_project": "Primary .NET project name (PascalCase, e.g. ZombieMiner.Web)",
-    "db_schemas": "PostgreSQL schema names (comma-separated, leave blank if no database)"
+    "package": "npm package name (kebab-case, defaults to project repository name)"
   }
 }

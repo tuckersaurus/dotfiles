@@ -1,6 +1,6 @@
 # {{cookiecutter.ws_repository}}
 
-Workspace repository for [{{cookiecutter.source_repo}}](https://github.com/{{cookiecutter.source_owner}}/{{cookiecutter.source_repo}}). Contains project configuration only — devcontainer, multi-root workspace, and dotnet solution stub. Source code lives in the source repository and is mounted as a volume in the devcontainer.
+Workspace repository for **{{cookiecutter.ws_repository}}**. Contains project configuration only — devcontainer, multi-root workspace, and dotnet solution stub. Source code lives in source repositories mounted as volumes in the devcontainer.
 
 ## Setup
 

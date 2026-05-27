@@ -1,6 +1,6 @@
 # {{cookiecutter.ws_repository}}
 
-Workspace repository for developing **{{cookiecutter.source_repo}}**. This repository contains the development environment configuration — source code lives in the companion project repository.
+Workspace repository for **{{cookiecutter.ws_repository}}**. Contains the development environment configuration — source code lives in companion source repositories mounted as volumes in the devcontainer.
 
 ## What This Workspace Provides
 
@@ -22,7 +22,7 @@ Workspace repository for developing **{{cookiecutter.source_repo}}**. This repos
 When running inside the dev container:
 
 - Workspace: `/project/workspace/`
-- Source repo (`{{cookiecutter.source_repo}}`): `/project/source/{{cookiecutter.source_repo}}/`
+- Source repos: `/project/source/<repo>/` (one per wired source repo)
 
 ## Database
 

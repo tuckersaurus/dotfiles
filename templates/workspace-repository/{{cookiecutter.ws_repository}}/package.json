@@ -4,11 +4,8 @@
   "devDependencies": {
     "concurrently": "^9.2.1"
   },
-  "workspaces": [
-    "../source/{{cookiecutter.source_repo}}"
-  ],
+  "workspaces": [],
   "scripts": {
-    "watch:{{cookiecutter.source_repo}}": "npm --workspace=@{{cookiecutter.source_owner}}/{{cookiecutter.source_package}} run watch:web",
-    "watch": "concurrently \"npm run watch:{{cookiecutter.source_repo}}\""
+    "watch": "concurrently"
   }
 }

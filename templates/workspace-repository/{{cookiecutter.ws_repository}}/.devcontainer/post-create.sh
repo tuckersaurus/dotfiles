@@ -15,12 +15,12 @@ dotnet tool install --global dotnet-ef
 # Install workspace-level npm dependencies (concurrently, watch scripts)
 npm install
 
-# Install repo-level npm dependencies (sass, esbuild, cpx2, etc.)
-npm install --prefix "/project/source/{{cookiecutter.source_repo}}"
-
-# Apply EF Core migrations on top of restored dump (or from scratch if no dump)
-dotnet ef database update --project "/project/source/{{cookiecutter.source_repo}}/dotnet/src/{{cookiecutter.source_project}}" \
-  || echo "Warning: Migrations failed — ensure the database is reachable and the schema is initialized."
+# Install npm dependencies for each mounted source repo
+for source_dir in /project/source/*/; do
+  if [ -f "$source_dir/package.json" ]; then
+    npm install --prefix "$source_dir"
+  fi
+done
 
 # Restore the workspace solution stub for IDE tooling
 dotnet restore \

@@ -2,9 +2,7 @@
   "name": "@{{cookiecutter.project_owner}}/{{cookiecutter.package}}",
   "version": "0.0.0",
   "private": true,
-  "workspaces": [
-    "dotnet/src/{{cookiecutter.source_project}}"
-  ],
+  "workspaces": [],
   "devDependencies": {
     "cpx2": "^7.0.0",
     "esbuild": "^0.27.2",

@@ -379,6 +379,48 @@ Since dotfiles already sources all `bash/*.sh` files (including `bash/node.sh`),
 
    This ensures MCP server configs, Claude settings, and custom commands are available in all devcontainers.
 
+5. The Claude Code **allowlist** is part of `~/dotfiles/claude/settings.json` (symlinked by `install.sh`) and applied automatically. No manual configuration needed — but here's the full permissions block for reference, including the entries required by the scaffold skills:
+
+   ```json
+   "permissions": {
+     "allow": [
+       "Bash(git *)",
+       "Bash(gh *)",
+       "Bash(ls *)",
+       "Bash(ls)",
+       "Bash(find *)",
+       "Bash(cat *)",
+       "Bash(head *)",
+       "Bash(tail *)",
+       "Bash(grep *)",
+       "Bash(wc *)",
+       "Bash(file *)",
+       "Bash(stat *)",
+       "Bash(du *)",
+       "Bash(df *)",
+       "Bash(which *)",
+       "Bash(type *)",
+       "Bash(echo *)",
+       "Bash(pwd)",
+       "Bash(tree *)",
+       "Bash(diff *)",
+       "Bash(sort *)",
+       "Bash(uniq *)",
+       "Bash(cut *)",
+       "Bash(awk *)",
+       "Bash(sed *)",
+       "Bash(cookiecutter *)",
+       "Bash(sudo *)",
+       "Bash(xargs *)",
+       "Bash(basename *)",
+       "Bash(mkdir *)",
+       "Bash(python3 *)"
+     ]
+   }
+   ```
+
+   `python3` and `mkdir` are required by the scaffold skills (`/new-source-project`, `/add-source-repo`, etc.) for package name derivation and directory creation. If the allowlist needs machine-specific additions, add them to `~/.claude/settings.local.json` — that file is not tracked in dotfiles.
+
 ---
 
 ### 12. GPG Keys (optional — for signed commits)

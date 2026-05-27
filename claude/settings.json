@@ -31,7 +31,9 @@
       "Bash(sudo *)",
       "Bash(xargs *)",
       "Bash(basename *)",
-      "Bash(gh repo create *)"
+      "Bash(gh repo create *)",
+      "Bash(mkdir *)",
+      "Bash(python3 *)"
     ]
   },
   "mcpServers": {

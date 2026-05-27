@@ -1,8 +1,10 @@
-Create a new **workspace repository** from the `workspace-repository` cookiecutter template and push it to GitHub. A workspace repo contains the devcontainer, VS Code workspace config, and .NET solution stub that wrap one or more source project repos.
+⚠️ Deprecated — use `/new-workspace-repo` + `/add-source-repo` instead.
+
+Create a new **workspace repository** from the `workspace-repository-old` cookiecutter template and push it to GitHub. A workspace repo contains the devcontainer, VS Code workspace config, and .NET solution stub that wrap one or more source project repos.
 
 Use this skill when you already know the source repos and projects. For a guided flow that also resolves or creates the source repos, use `/new-workspace-project` instead.
 
-The template lives at `~/dotfiles/templates/workspace-repository`. Workspace repos are named with a `ws-` prefix (e.g., `ws-zombie-miner`, `ws-game-tools`) and live at `~/projects/source/github/<workspace_owner>/<ws_repository>/`.
+The template lives at `~/dotfiles/templates/workspace-repository-old`. Workspace repos are named with a `ws-` prefix (e.g., `ws-zombie-miner`, `ws-game-tools`) and live at `~/projects/source/github/<workspace_owner>/<ws_repository>/`.
 
 ## Collecting inputs (looping style)
 
@@ -46,7 +48,7 @@ Present a full summary of all collected values (source repos, source projects, w
 Cookiecutter scaffolds using the first source repo and first project as scalar parameters:
 
 ```bash
-cookiecutter ~/dotfiles/templates/workspace-repository \
+cookiecutter ~/dotfiles/templates/workspace-repository-old \
   --no-input \
   --output-dir ~/projects/source/github/<workspace_owner> \
   ws_repository=<ws_repository> \

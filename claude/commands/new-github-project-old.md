@@ -1,6 +1,8 @@
-Create a new **project repository** from the `project-repository` cookiecutter template and push it to GitHub. This is specifically for project repos — use a different command or template for workspace repositories or other repo types.
+⚠️ Deprecated — use `/new-source-repo` + `/new-source-project` instead.
 
-The template lives at `~/dotfiles/templates/project-repository` and scaffolds a full project structure including .github workflows, .devcontainer, dotnet layout, postgres, and VSCode config.
+Create a new **project repository** from the `project-repository-old` cookiecutter template and push it to GitHub. This is specifically for project repos — use a different command or template for workspace repositories or other repo types.
+
+The template lives at `~/dotfiles/templates/project-repository-old` and scaffolds a full project structure including .github workflows, .devcontainer, dotnet layout, postgres, and VSCode config.
 
 ## Steps
 
@@ -40,7 +42,7 @@ The template lives at `~/dotfiles/templates/project-repository` and scaffolds a 
 
 5. Run cookiecutter non-interactively using `--no-input` with explicit variable overrides, so there are no interactive prompts:
    ```bash
-   cookiecutter ~/dotfiles/templates/project-repository \
+   cookiecutter ~/dotfiles/templates/project-repository-old \
      --no-input \
      --output-dir ~/projects/source/github/<owner> \
      project_repository=<repo-name> \
