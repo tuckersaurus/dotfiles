@@ -47,4 +47,4 @@ Rules:
 
 6. Run `git status` to confirm the commit succeeded.
 
-Do NOT push unless explicitly asked.
+7. Push: `git push`
