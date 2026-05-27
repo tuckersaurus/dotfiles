@@ -20,5 +20,5 @@
 - npm devDependencies are declared once at the repo root `package.json`
 - src project packages are light — scripts only, no devDependencies (rely on npm hoisting)
 - Root npm package: `@{{cookiecutter.project_owner}}/{{cookiecutter.package}}`
-- Database schemas: `{{cookiecutter.db_schemas}}` (see `postgres/init.sql`; comma-separated, may be blank)
+- Database schemas defined in `postgres/init.sql`
 - SCSS linting config: `stylelint.config.mjs`
