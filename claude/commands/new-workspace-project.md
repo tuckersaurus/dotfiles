@@ -13,7 +13,7 @@ Run `gh repo view <owner>/<repo> --json name,owner` to check if it exists:
 **Found** — proceed to cloning check.
 
 **Not found** — use `AskUserQuestion`:
-- **"Create it"** — ask the user for permission to invoke `/new-github-project`, then invoke it with the given owner and repo name. Wait for it to complete before continuing. The newly created repo is now the first source repo.
+- **"Create it"** — ask for the primary .NET project name before invoking the skill. Present one option `Accept "<PascalCase(repo)>.Web"` with description "Use Other to enter a different project name (e.g. ZombieMiner.Api, ZombieMiner.Worker)." Once the project name is confirmed, invoke `/new-github-project` with the given owner, repo name, and `source_project=<name>`. Wait for it to complete before continuing. The newly created repo is now the first source repo.
 - **"Choose a different repo"** — fetch available repos (personal + all orgs), filter out `ws-` prefix repos, present as options:
   ```bash
   # Personal repos
@@ -31,7 +31,12 @@ ls ~/projects/source/github/<owner>/<repo> 2>/dev/null || \
   git clone git@github.com:<owner>/<repo>.git ~/projects/source/github/<owner>/<repo>
 ```
 
-**Auto-detect `source_package`**: read the `name` field from `~/projects/source/github/<owner>/<repo>/package.json` and strip the `@<owner>/` prefix. Confirm with the user (they can override).
+**Auto-detect `source_package`**: read the `name` field from `package.json` using grep/sed:
+```bash
+grep '"name"' ~/projects/source/github/<owner>/<repo>/package.json \
+  | sed 's/.*"name": *"\(.*\)".*/\1/'
+```
+Do **not** strip the `@<owner>/` prefix — use the full scoped name as the default (e.g. `@tuckersaurus/zombie-miner`). Confirm with the user using one option `Accept "@tuckersaurus/zombie-miner"` with description "Use Other to enter a different package name." Do NOT add a separate "Override it" option.
 
 This repo becomes the **current repo**.
 
@@ -70,4 +75,4 @@ Ask for:
 
 ## Step 5 — Invoke `/new-github-workspace`
 
-Ask the user for permission to invoke `/new-github-workspace` with all collected params. Once approved, invoke it — passing the workspace params and all source repo/project entries.
+Invoke `/new-github-workspace` directly with all collected params — passing the workspace params and all source repo/project entries. The workspace skill handles its own confirmation summary before creating anything.

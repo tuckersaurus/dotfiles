@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "workspaces": [
-    "dotnet/src/<ProjectName>"
+    "dotnet/src/{{cookiecutter.source_project}}"
   ],
   "devDependencies": {
     "cpx2": "^7.0.0",

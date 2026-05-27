@@ -10,7 +10,7 @@ The template lives at `~/dotfiles/templates/workspace-repository`. Workspace rep
 
 Ask for the first source repo as `<owner>/<repo>` (e.g., `house-hippo-handlers/zombie-miner`).
 
-Ask for the npm package name (`source_package`), defaulting to the repo name (the part after `/`).
+Ask for the npm package name (`source_package`), defaulting to the full scoped name `@<source_owner>/<repo_name>` (e.g. `@tuckersaurus/zombie-miner`). Present one option `Accept "@<source_owner>/<repo_name>"` with description "Use Other to enter a different package name." Do NOT add a separate "Override it" option.
 
 This repo becomes the **current repo**.
 
@@ -24,7 +24,7 @@ Ask for the first .NET project from the current repo:
 
 Use `AskUserQuestion` with these options:
 - **"Add another project"** → Ask for project name and type. Automatically assigned to the current repo (no need to re-ask which repo). Return to step 3.
-- **"Add another repo"** → Ask for the next repo as `<owner>/<repo>` and its `source_package`. That repo becomes the new current repo. Then ask for its first project (step 2). Return to step 3.
+- **"Add another repo"** → Ask for the next repo as `<owner>/<repo>` and its `source_package` (default to the full scoped name `@<owner>/<repo>`, same UX as Step 1). That repo becomes the new current repo. Then ask for its first project (step 2). Return to step 3.
 - **"Done"** → Exit the loop.
 
 ### Step 4 — Workspace parameters
@@ -171,10 +171,9 @@ For **every** source project, apply the following patches. App-type projects go 
 ### Step 9 — Initialize git and commit
 
 ```bash
-WS_PATH="$HOME/projects/source/github/<workspace_owner>/<ws_repository>"
-git -C "$WS_PATH" init
-git -C "$WS_PATH" add .
-git -C "$WS_PATH" commit -m "chore: initial workspace scaffold from template"
+git -C ~/projects/source/github/<workspace_owner>/<ws_repository> init
+git -C ~/projects/source/github/<workspace_owner>/<ws_repository> add .
+git -C ~/projects/source/github/<workspace_owner>/<ws_repository> commit -m "chore: initial workspace scaffold from template"
 ```
 
 ### Step 10 — Create GitHub repo and push
