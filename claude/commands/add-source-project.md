@@ -86,9 +86,9 @@ If **not found** (first project from this repo):
     // <additional-tasks>
 ```
 
-**`.vscode/launch.json`** (app only) — insert before `// <additional-launch-configs>`, keep marker:
+**`.vscode/launch.json`** (app only) — insert before `// <additional-launch-configs>`, keep marker. Check whether the `configurations` array already has entries (search for a `}` between `"configurations": [` and the marker); if this is the first entry omit the leading `,`, otherwise include it:
 ```json
-    ,
+    ,   ← omit if first entry
     {
       "name": "Launch <project>",
       "type": "coreclr",
