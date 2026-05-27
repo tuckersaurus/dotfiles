@@ -1,0 +1,62 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Watch Assets",
+      "type": "shell",
+      "command": "npm run watch",
+      "problemMatcher": [],
+      "group": "build",
+      "isBackground": true,
+      "runOptions": {
+        "reevaluateOnRerun": true
+      }
+    },
+    {
+      "label": "Watch : {{cookiecutter.source_repo}}",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "watch:{{cookiecutter.source_repo}}"],
+      "problemMatcher": [],
+      "group": "build",
+      "isBackground": true,
+      "runOptions": {
+        "reevaluateOnRerun": true
+      }
+    },
+    {
+      "label": "Run {{cookiecutter.source_project}}",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "watch",
+        "run",
+        "--launch-profile",
+        "dev-container",
+        "--project",
+        "${workspaceFolder:🚀 {{cookiecutter.source_project}}}/{{cookiecutter.source_project}}.csproj"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": "build",
+      "runOptions": {
+        "reevaluateOnRerun": true
+      },
+      "isBackground": true,
+      "options": {
+        "env": {
+          "ASPNETCORE_URLS": "http://0.0.0.0:5000"
+        }
+      }
+    },
+    {
+      "label": "Run + Watch {{cookiecutter.source_project}}",
+      "dependsOn": [
+        "Run {{cookiecutter.source_project}}",
+        "Watch Assets"
+      ],
+      "dependsOrder": "parallel",
+      "group": "build"
+    }
+    // <additional-tasks>
+  ]
+}

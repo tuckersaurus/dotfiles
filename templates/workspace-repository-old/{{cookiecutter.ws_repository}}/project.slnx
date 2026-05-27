@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../source/{{cookiecutter.source_repo}}/dotnet/src/{{cookiecutter.source_project}}/{{cookiecutter.source_project}}.csproj" />
+  <!-- <additional-source-projects> -->
+</Solution>

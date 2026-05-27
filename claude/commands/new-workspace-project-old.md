@@ -1,6 +1,8 @@
-Full guided flow for creating a new workspace: resolve or create source repos, ensure they're on disk, auto-detect properties, then delegate to `/new-github-workspace` to scaffold and publish the workspace repo.
+⚠️ Deprecated — use `/new-environment` instead.
 
-Use `/new-github-workspace` directly if you already know all source repo and project names.
+Full guided flow for creating a new workspace: resolve or create source repos, ensure they're on disk, auto-detect properties, then delegate to `/new-github-workspace-old` to scaffold and publish the workspace repo.
+
+Use `/new-github-workspace-old` directly if you already know all source repo and project names.
 
 ---
 
@@ -13,7 +15,7 @@ Run `gh repo view <owner>/<repo> --json name,owner` to check if it exists:
 **Found** — proceed to cloning check.
 
 **Not found** — use `AskUserQuestion`:
-- **"Create it"** — ask for the primary .NET project name before invoking the skill. Present one option `Accept "<PascalCase(repo)>.Web"` with description "Use Other to enter a different project name (e.g. ZombieMiner.Api, ZombieMiner.Worker)." Once the project name is confirmed, invoke `/new-github-project` with the given owner, repo name, and `source_project=<name>`. Wait for it to complete before continuing. The newly created repo is now the first source repo.
+- **"Create it"** — ask for the primary .NET project name before invoking the skill. Present one option `Accept "<PascalCase(repo)>.Web"` with description "Use Other to enter a different project name (e.g. ZombieMiner.Api, ZombieMiner.Worker)." Once the project name is confirmed, invoke `/new-github-project-old` with the given owner, repo name, and `source_project=<name>`. Wait for it to complete before continuing. The newly created repo is now the first source repo.
 - **"Choose a different repo"** — fetch available repos (personal + all orgs), filter out `ws-` prefix repos, present as options:
   ```bash
   # Personal repos
@@ -73,6 +75,6 @@ Ask for:
 
 ---
 
-## Step 5 — Invoke `/new-github-workspace`
+## Step 5 — Invoke `/new-github-workspace-old`
 
-Invoke `/new-github-workspace` directly with all collected params — passing the workspace params and all source repo/project entries. The workspace skill handles its own confirmation summary before creating anything.
+Invoke `/new-github-workspace-old` directly with all collected params — passing the workspace params and all source repo/project entries. The workspace skill handles its own confirmation summary before creating anything.
