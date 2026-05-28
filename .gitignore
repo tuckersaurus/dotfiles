@@ -1,1 +1,3 @@
-/.claude/
+*.dump
+.env
+node_modules/
