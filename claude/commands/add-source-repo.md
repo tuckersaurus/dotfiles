@@ -48,13 +48,13 @@ If user selects a GitHub-only workspace: flag it as `needs-clone` — do not clo
 
 If `repo=` arg provided: use it silently. Proceed to Step 3.
 
-Otherwise, plain text in this order:
+Otherwise, plain text:
 1. "What is the source repository name? (e.g. zombie-miner)"
-2. "Who owns this repository? (default: tuckersaurus)"
+2. "Who owns this repository? (e.g. tuckersaurus)"
 
 → **Lookup** repo on disk, then GitHub if not found locally.
 
-If **not found anywhere:** `AskUserQuestion` — "owner/repo wasn't found. What would you like to do?"
+If **not found anywhere:** `AskUserQuestion` — "tuckersaurus/repo wasn't found. What would you like to do?"
 - `Create it (private)`
 - `Create it (public)`
 - `Cancel`
@@ -84,7 +84,8 @@ Otherwise, for each project:
 
    If **new:**
    - `AskUserQuestion` — "ProjectName wasn't found. What would you like to do?" → `Create it (App)` / `Create it (Library)` / `Cancel`
-   - Plain text: "Any PostgreSQL schemas? (comma-separated, e.g. zombie_miner — or leave blank for none)"
+   - Plain text: "Any PostgreSQL schemas? (comma-separated, e.g. zombie_miner — type 'none' for no schemas)"
+   - Treat a response of `none` or `n` as no schemas — pass `schemas=` (empty string) to `/create-source-project`.
    - Flag project as `new (App)` or `new (Library)` with schemas stored — do not create yet.
 
 3. `AskUserQuestion` — "What next?" → `Add another project` / `Done`

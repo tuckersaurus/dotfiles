@@ -34,15 +34,14 @@ Flag each repo and project as `new`, `existing`, or `existing, needs-clone`.
 
 Ask as plain text:
 1. "What should the workspace be called? (e.g. ws-sample)"
-2. "Who is the workspace owner? (default: tuckersaurus)"
 
-Workspace is always `new` and always private — no lookup, no visibility question.
+Workspace owner is always `tuckersaurus`. Workspace is always `new` and always private — no lookup, no visibility question.
 
 ### Step 2 — Source repo
 
 Ask as plain text:
 1. "What is the source repository name? (e.g. source-sample)"
-2. "Who owns this repository? (default: tuckersaurus)"
+2. "Who owns this repository? (e.g. tuckersaurus)"
 
 → **Lookup** repo on disk, then GitHub if not found locally.
 
@@ -69,7 +68,9 @@ If **not found:** `AskUserQuestion` — "ProjectName wasn't found. What would yo
 - `Create it (Library)` → flag project as `new (Library)`
 - `Cancel` → quit `/new-environment` entirely
 
-If creating: plain text: "Any PostgreSQL schemas? (comma-separated, e.g. my_app, security — or leave blank for none)"
+If creating: plain text: "Any PostgreSQL schemas? (comma-separated, e.g. my_app, security — type 'none' for no schemas)"
+
+Treat a response of `none` or `n` as no schemas — pass `schemas=` (empty string) to `/create-source-project`.
 
 If **found:** flag as `existing` — no further questions for this project.
 
@@ -118,7 +119,7 @@ git clone git@github.com:<owner>/<repo>.git \
 ### Step 7 — Create workspace
 
 ```
-/create-workspace-repo workspace_owner=<owner> ws_repository=<ws_repository>
+/create-workspace-repo workspace_owner=tuckersaurus ws_repository=<ws_repository>
 ```
 
 ### Step 8 — Create new source repos
