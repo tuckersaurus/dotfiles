@@ -9,6 +9,9 @@ trap 'on_error $LINENO' ERR
 
 echo "post-create.sh ..."
 
+# Required by the Todo-Tree extension (vscode-ripgrep was renamed to @vscode/ripgrep, breaking bundled resolution)
+sudo apt-get install -y ripgrep
+
 # Install EF Core CLI tool
 dotnet tool install --global dotnet-ef
 
