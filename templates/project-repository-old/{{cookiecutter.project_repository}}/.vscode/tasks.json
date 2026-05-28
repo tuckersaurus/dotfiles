@@ -1,6 +1,0 @@
-{
-  "version": "2.0.0",
-  "tasks": [
-    // Add build/run tasks after creating your .NET projects with dotnet new
-  ]
-}
