@@ -1,186 +1,184 @@
-Add a source repo (with its projects) to an existing workspace. Creates the source repo and/or projects on disk if needed. Patches all workspace config files and commits.
+Add a source repo (with its projects) to an existing workspace. Creates the source repo and/or projects on disk if needed. Patches all workspace config files.
 
-**Arguments:** `workspace=<owner>/<ws_repo>` (optional), `repo=<owner>/<repo>` (optional), `source_package=<pkg>` (optional), `projects=<name>:<type>[,<name>:<type>]` (optional), `push=true`, `visibility=private|public` (default `private`)
+**Arguments:** `workspace=<owner>/<ws_repo>` (optional), `repo=<owner>/<repo>` (optional), `projects=<name>:<type>[,<name>:<type>]` (optional), `push=false`, `visibility=private|public` (default `private`)
 
-- `source_package` — unscoped npm package name (e.g. `zombie-miner`, not `@tuckersaurus/zombie-miner`); skips Step 5 prompt when provided
 - `projects` — skips the interactive project loop; all projects assumed to already exist on disk; format: `ZombieMiner.Web:app,ZombieMiner.Core:library`
 
 **General non-interactive rule:** If all required args are provided, skip the confirmation step and proceed directly.
 
 ---
 
-## Steps
+## Question style rules
 
-### 1 — Resolve workspace
+- **Free-text inputs** (repo names, project names, schemas): plain conversational text — never use `AskUserQuestion`.
+- **Fixed-choice inputs** (workspace selection, create-or-cancel, what-next, final confirm): use `AskUserQuestion`.
 
-- If `workspace=<owner>/<ws_repo>` provided → use `~/projects/source/github/<owner>/<ws_repo>`
-- Else scan: `find ~/projects/source/github -maxdepth 2 -name "project.code-workspace" 2>/dev/null`
-  - One result: confirm with user
-  - Multiple: present as options
-  - None: error
-- If workspace path not on disk: `gh repo view <owner>/<ws_repo>` — clone if found on GitHub, else error
+---
 
-### 2 — Accept or ask for source repo
+## Lookup logic
 
-Accept from `repo=` arg, or ask for `<owner>/<repo>`.
+All lookups are silent — no output to the user unless an action is required.
 
-### 3 — Idempotency check
+- **Repo on disk:** check if `$HOME/projects/source/github/<owner>/<repo>` exists.
+- **Repo on GitHub:** only if not found on disk — run `gh repo view <owner>/<repo>`.
+- **Project on disk:** check if `$HOME/projects/source/github/<owner>/<repo>/dotnet/src/<ProjectName>` exists.
+- **source_package:** always auto-derived — never asked. If repo is `new`: use repo name as-is (e.g. `zombie-miner`). If repo is `existing`: read `name` from source repo's `package.json` and strip the `@<owner>/` prefix silently.
 
-Scan workspace `package.json` for `"../source/<repo>"` in workspaces array. If found: warn ("this repo is already in the workspace") and exit.
+---
 
-### 4 — Resolve source repo
+## Collection phase (Steps 1–5)
 
-- On disk: proceed.
-- Not on disk: `gh repo view <owner>/<repo> --json name`
-  - Found on GitHub → clone it
-  - Not found → offer **"Create it"** (`/new-source-repo owner=<owner> repo=<repo> push=false visibility=<visibility>`) or **"Cancel"**
+### Step 1 — Resolve workspace
 
-### 5 — Detect source_package
+If `workspace=` arg provided: resolve path silently. Proceed to Step 2.
 
-Skip if `source_package=` arg provided.
+If not provided, scan silently:
+1. **Disk:** `find ~/projects/source/github -maxdepth 2 -name "project.code-workspace" 2>/dev/null`
+2. **GitHub:** `gh repo list tuckersaurus --json name --jq '.[] | select(.name | startswith("ws-")) | .name'` — exclude any already found on disk
 
-Otherwise: read `name` from `~/projects/source/github/<owner>/<repo>/package.json`, strip `@<owner>/` prefix to get the unscoped name (e.g. `@tuckersaurus/zombie-miner` → `zombie-miner`). Present `Accept "zombie-miner" (@tuckersaurus/zombie-miner)` + Other.
+Combine both lists. For each GitHub-only result, append `(GitHub)` to the name so the user knows it isn't local yet.
 
-Note: `source_package` must be the unscoped name — the patch template uses `@<source_owner>/<source_package>`.
+- **One result total:** `AskUserQuestion` — "Found ws-my-app. Use this workspace?" → `Use it` / `Cancel`
+- **Multiple results:** `AskUserQuestion` listing each workspace name as an option
+- **None:** error — no workspace found on disk or GitHub
 
-### 6 — Project loop
+If user selects a GitHub-only workspace: flag it as `needs-clone` — do not clone yet. The clone happens in the scaffold phase after confirmation.
 
-Skip entirely if `projects=` arg was provided — use those name:type pairs directly (projects assumed to exist on disk already).
+### Step 2 — Source repo
 
-Otherwise (interactive):
-- Auto-detect `.csproj` names in `dotnet/src/` for suggestions
-- Ask project name
-- If project exists at `dotnet/src/<project>/`: detect type from `.csproj` (`Sdk="Microsoft.NET.Sdk.Web"` → app; else → library) — confirm with user
-- If project doesn't exist: ask type + schemas → call `/new-source-project repo=<owner>/<repo> project=<project> type=<type> schemas=<schemas> push=false visibility=<visibility>` (all args — no prompts inside)
-- Ask "Add another project?" — loop
+If `repo=` arg provided: use it silently. Proceed to Step 3.
 
-### 7 — Confirm
+Otherwise, plain text in this order:
+1. "What is the source repository name? (e.g. zombie-miner)"
+2. "Who owns this repository? (default: tuckersaurus)"
+
+→ **Lookup** repo on disk, then GitHub if not found locally.
+
+If **not found anywhere:** `AskUserQuestion` — "owner/repo wasn't found. What would you like to do?"
+- `Create it (private)`
+- `Create it (public)`
+- `Cancel`
+
+If creating: flag repo as `new (private)` or `new (public)` based on the chosen option — do not create yet.
+
+If **found on disk:** flag as `existing`.
+
+If **found on GitHub only:** flag as `existing, needs-clone` — do not clone yet.
+
+### Step 3 — Idempotency check
+
+Scan workspace `package.json` for `"../source/<repo>"` in the workspaces array. Silent check — only output if a duplicate is detected, then warn and exit.
+
+### Step 4 — Project loop
+
+Skip entirely if `projects=` arg was provided — use those name:type pairs directly (all assumed to exist on disk).
+
+Otherwise, for each project:
+
+1. Plain text — list any auto-detected `.csproj` names from `dotnet/src/` as suggestions in the question text:
+   > "What is the project name? (PascalCase, e.g. ZombieMiner.Web)"
+
+2. → **Lookup** project on disk. If the source repo is `existing, needs-clone`, skip the disk lookup and run `gh api repos/<owner>/<repo>/contents/dotnet/src/<ProjectName>` instead (200 = exists, 404 = not found).
+
+   If **existing:** detect type from `.csproj` (`Sdk="Microsoft.NET.Sdk.Web"` → App; else → Library) for on-disk repos. For GitHub-only repos, infer from the `.csproj` via `gh api repos/<owner>/<repo>/contents/dotnet/src/<ProjectName>/<ProjectName>.csproj`. Use silently — no confirmation question.
+
+   If **new:**
+   - `AskUserQuestion` — "ProjectName wasn't found. What would you like to do?" → `Create it (App)` / `Create it (Library)` / `Cancel`
+   - Plain text: "Any PostgreSQL schemas? (comma-separated, e.g. zombie_miner — or leave blank for none)"
+   - Flag project as `new (App)` or `new (Library)` with schemas stored — do not create yet.
+
+3. `AskUserQuestion` — "What next?" → `Add another project` / `Done`
+
+### Step 5 — Confirm
 
 Skip if all required args were provided.
 
-### 8 — Patch workspace — repo-level
+Display a scaffold plan using this format:
 
-**`project.code-workspace`** — insert before `// <repo-roots>`, keep marker:
-```json
-    ,
-    {
-      "name": "🏁 Repository : <repo>",
-      "path": "../source/<repo>"
-    }
-    // <repo-roots>
+```
+Adding to workspace: tuckersaurus/ws-my-app
+
+  tuckersaurus/zombie-miner (private)                        [CREATE]
+    └── ZombieMiner.Web    App    schemas: zombie_miner      [CREATE]
+    └── ZombieMiner.Core   Library                           [EXISTING]
 ```
 
-**`.devcontainer/docker-compose.yml`** — insert before `# <additional-source-repos>`, keep marker:
-```yaml
-      - ${HOME}/projects/source/github/<owner>/<repo>:/project/source/<repo>
-      # <additional-source-repos>
+`AskUserQuestion`:
+- `Looks good, proceed`
+- `Go back and edit`
+
+---
+
+## Scaffold phase (Steps 6–9)
+
+### Step 6 — Clone any GitHub-only items
+
+For each item flagged `needs-clone` (workspace or source repo):
+```bash
+git clone git@github.com:<owner>/<repo>.git \
+  $HOME/projects/source/github/<owner>/<repo>
 ```
 
-**`.postgres/01-int.sql`** — insert before `-- <additional-source-repos>`, keep marker:
-```sql
-\i /project/source/<repo>/postgres/init.sql
--- <additional-source-repos>
+### Step 7 — Create source repo (if new)
+
+If repo is flagged `new`:
+```
+/create-source-repo owner=<owner> repo=<repo>
+```
+Skip if flagged `existing` or `existing, needs-clone`.
+
+### Step 8 — Create new projects
+
+For each project flagged `new (App)` or `new (Library)`:
+```
+/create-source-project repo=<owner>/<repo> project=<name> type=<app|library> schemas=<s1,s2>
+```
+Pass `schemas=` (empty string) for no schemas. Skip projects flagged `existing`.
+
+### Step 9 — Patch workspace
+
+For each project (both `new` and `existing`):
+```
+/update-workspace-repo workspace=<ws_owner>/<ws_repo> repo=<owner>/<repo> source_package=<source_package> project=<name> type=<app|library>
 ```
 
-**`package.json`**:
-- Add `"../source/<repo>"` to the `workspaces` array
-- Add `"watch:<repo>": "npm --workspace=@<source_owner>/<source_package> run watch:web"` to `scripts`
-- Update `watch` script: if value is `"concurrently"` (bare) → replace with `"concurrently \"npm run watch:<repo>\""`, else append ` \"npm run watch:<repo>\"`
+---
 
-**`.vscode/tasks.json`** — insert before `// <additional-tasks>`, keep marker:
-```json
-    ,
-    {
-      "label": "Watch : <repo>",
-      "type": "shell",
-      "command": "npm",
-      "args": ["run", "watch:<repo>"],
-      "problemMatcher": [],
-      "group": "build",
-      "isBackground": true,
-      "runOptions": { "reevaluateOnRerun": true }
-    }
-    // <additional-tasks>
-```
+## Commit & push phase (Steps 10–11)
 
-### 9 — Patch workspace — project-level
+If `push=false`: skip this phase entirely.
 
-For each project (same patches as `/add-source-project` Step 6):
+### Step 10 — Commit workspace changes
 
-**`project.code-workspace`** — insert before `// <app-projects>` (app) or `// <library-projects>` (library), keep marker:
-```json
-    ,
-    {
-      "name": "🚀 <project>",   (or 📚 for library)
-      "path": "../source/<repo>/dotnet/src/<project>"
-    }
-    // <app-projects>
-```
-
-**`project.slnx`** — insert before `<!-- <additional-source-projects> -->`, keep marker:
-```xml
-  <Project Path="../source/<repo>/dotnet/src/<project>/<project>.csproj" />
-  <!-- <additional-source-projects> -->
-```
-
-**`.vscode/tasks.json`** (app only) — insert before `// <additional-tasks>`, keep marker:
-```json
-    ,
-    {
-      "label": "Run <project>",
-      "type": "shell",
-      "command": "dotnet",
-      "args": ["watch", "run", "--launch-profile", "dev-container", "--project",
-               "${workspaceFolder:🚀 <project>}/<project>.csproj"],
-      "problemMatcher": "$msCompile",
-      "group": "build",
-      "runOptions": { "reevaluateOnRerun": true },
-      "isBackground": true,
-      "options": { "env": { "ASPNETCORE_URLS": "http://0.0.0.0:5000" } }
-    },
-    {
-      "label": "Run + Watch <project>",
-      "dependsOn": ["Run <project>", "Watch Assets"],
-      "dependsOrder": "parallel",
-      "group": "build"
-    }
-    // <additional-tasks>
-```
-
-**`.vscode/launch.json`** (app only) — insert before `// <additional-launch-configs>`, keep marker. Check whether the `configurations` array already has entries (search for a `}` between `"configurations": [` and the marker); if this is the first entry omit the leading `,`, otherwise include it:
-```json
-    ,   ← omit if first entry
-    {
-      "name": "Launch <project>",
-      "type": "coreclr",
-      "request": "launch",
-      "program": "${workspaceFolder:🚀 <project>}/bin/Debug/net10.0/<project>.dll",
-      "cwd": "${workspaceFolder:🚀 <project>}",
-      "preLaunchTask": "Run + Watch <project>"
-    }
-    // <additional-launch-configs>
-```
-
-### 10 — Commit workspace
+The workspace is an existing repo — changes go via branch → PR, not directly to main.
 
 ```bash
+git -C <ws_path> checkout -b chore/add-<repo>-to-workspace
 git -C <ws_path> add .
 git -C <ws_path> commit -m "chore: add <repo> to workspace"
+git -C <ws_path> push -u origin chore/add-<repo>-to-workspace
+gh pr create --repo <ws_owner>/<ws_repo> \
+  --title "chore: add <repo> to workspace" \
+  --body "Wires tuckersaurus/<repo> into the workspace config." \
+  --base main
 ```
 
-If `push=true`: `git -C <ws_path> push`
+### Step 11 — Push source repo (if new)
 
-### 11 — Push source repo (if new project was created)
-
-Only if `/new-source-project` was called in Step 6 AND `push=true`:
-- If source repo has a remote (`git -C <path> remote get-url origin` succeeds): `git -C <path> push`
-- If no remote: use `visibility` arg (or ask if not provided), then:
+Only if the source repo was flagged `new (private)` or `new (public)` in Step 2:
+- If source repo already has a remote (`git -C <path> remote get-url origin` succeeds): `git -C <path> push`
+- If no remote (repo was just created locally):
   ```bash
+  git -C $HOME/projects/source/github/<owner>/<repo> add .
+  git -C $HOME/projects/source/github/<owner>/<repo> commit -m "chore: initial scaffold"
   gh repo create <owner>/<repo> --<visibility> \
     --source="$HOME/projects/source/github/<owner>/<repo>" \
     --remote=origin --push
   ```
+  This is initial creation — a single direct push to main is correct here.
 
-### 12 — Print summary
+---
 
-Print all paths and GitHub URLs (if pushed).
+### Step 10 — Print summary
+
+Print all local paths and GitHub URLs (if pushed).
