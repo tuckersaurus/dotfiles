@@ -8,13 +8,15 @@
   "features": {
     "ghcr.io/devcontainers/features/node:2.0.0": {
       "version": "24"
-    }
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "remoteUser": "vscode",
   "updateRemoteUserUID": true,
   "remoteEnv": {
     "GITHUB_NUGET_TOKEN": "${localEnv:GITHUB_NUGET_TOKEN}",
     "GITHUB_MCP_TOKEN": "${localEnv:GITHUB_MCP_TOKEN}",
+    "GH_TOKEN": "${localEnv:GH_TOKEN}",
     "PATH": "${containerEnv:PATH}:/home/vscode/.dotnet/tools"
   },
   "customizations": {
