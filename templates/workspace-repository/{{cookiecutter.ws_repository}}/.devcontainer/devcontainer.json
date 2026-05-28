@@ -16,6 +16,7 @@
   "remoteEnv": {
     "GITHUB_NUGET_TOKEN": "${localEnv:GITHUB_NUGET_TOKEN}",
     "GITHUB_MCP_TOKEN": "${localEnv:GITHUB_MCP_TOKEN}",
+    "GH_TOKEN": "${localEnv:GH_TOKEN}",
     "PATH": "${containerEnv:PATH}:/home/vscode/.dotnet/tools"
   },
   "customizations": {
