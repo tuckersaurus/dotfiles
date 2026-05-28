@@ -1,102 +1,176 @@
-Full guided flow for creating a complete workspace environment from scratch: collect all details interactively, then scaffold everything in the right order and wire it together.
+Full guided flow for creating a complete workspace environment from scratch: collect all details interactively with silent lookups, scaffold everything on disk, then optionally push to GitHub.
 
-**Arguments:** `push=true`, `visibility=private|public` (default `private`)
+**Arguments:** none — all inputs are collected interactively.
+
+---
+
+## Question style rules
+
+- **Free-text inputs** (names, owners, schemas): plain conversational text — never use `AskUserQuestion`.
+- **Fixed-choice inputs** (create-or-cancel, project type, what-next, confirm): use `AskUserQuestion`.
+
+---
+
+## Lookup logic
+
+Lookups are silent — no output to the user. Run them immediately after collecting the relevant name/owner.
+
+- **Repo on disk:** check if `$HOME/projects/source/github/<owner>/<repo>` exists.
+- **Repo on GitHub:** only if not found on disk — run `gh repo view <owner>/<repo>`.
+- **Project on disk:** check if `$HOME/projects/source/github/<owner>/<repo>/dotnet/src/<ProjectName>` exists.
+- **Project on GitHub** (only when parent repo is `needs-clone`): `gh api repos/<owner>/<repo>/contents/dotnet/src/<ProjectName>` — 200 means exists, 404 means not found.
+
+Flag each repo and project as `new`, `existing`, or `existing, needs-clone`.
+
+- **Found on disk:** `existing`
+- **Not on disk, found on GitHub:** `existing, needs-clone` — do not clone during questions
+- **Not found anywhere:** prompts the create-or-cancel question
 
 ---
 
 ## Collection phase (Steps 1–5)
 
-### Step 1 — Workspace params
+### Step 1 — Workspace
 
-Ask for:
-- `workspace_owner` (default `tuckersaurus`)
-- `ws_repository` (ws- prefix convention; suggest `ws-<first_repo>` once the first repo is known)
+Ask as plain text:
+1. "What should the workspace be called? (e.g. ws-sample)"
+2. "Who is the workspace owner? (default: tuckersaurus)"
 
-### Step 2 — First source repo
+Workspace is always `new` and always private — no lookup, no visibility question.
 
-Ask for the first source repo as `<owner>/<repo>`.
+### Step 2 — Source repo
 
-### Step 3 — First project
+Ask as plain text:
+1. "What is the source repository name? (e.g. source-sample)"
+2. "Who owns this repository? (default: tuckersaurus)"
 
-Ask for:
-- Project name (PascalCase, e.g. `ZombieMiner.Web`)
-- Project type: **app** (🚀) or **library** (📚)
-- PostgreSQL schemas for this project: suggest snake_case of project name; option for none; loop to add more
+→ **Lookup** repo on disk, then GitHub if not found locally.
 
-### Step 4 — Loop: "What next?"
+If **not found:** `AskUserQuestion` — "owner/repo wasn't found. What would you like to do?"
+- `Create it (private)` → flag repo as `new (private)`
+- `Create it (public)` → flag repo as `new (public)`
+- `Cancel` → quit `/new-environment` entirely
 
-Use `AskUserQuestion`:
-- **"Add another project"** → ask project name + type + schemas, assign to current repo. Return to step 4.
-- **"Add another repo"** → ask for `<owner>/<repo>`, it becomes the current repo. Ask its first project (name + type + schemas). Return to step 4.
-- **"Done"** → exit loop.
+If **found on disk:** flag as `existing` — no further questions for the repo itself; proceed to Step 3.
+
+If **found on GitHub only:** flag as `existing, needs-clone` — no further questions; proceed to Step 3.
+
+### Step 3 — Project
+
+Ask as plain text:
+1. "What is the project name? (PascalCase, e.g. SourceProject.Web)"
+
+→ **Lookup** `$HOME/projects/source/github/<owner>/<repo>/dotnet/src/<ProjectName>`.
+
+If the parent repo is `needs-clone`, skip the disk lookup and instead run the GitHub API check: `gh api repos/<owner>/<repo>/contents/dotnet/src/<ProjectName>`.
+
+If **not found:** `AskUserQuestion` — "ProjectName wasn't found. What would you like to do?"
+- `Create it (App)` → flag project as `new (App)`
+- `Create it (Library)` → flag project as `new (Library)`
+- `Cancel` → quit `/new-environment` entirely
+
+If creating: plain text: "Any PostgreSQL schemas? (comma-separated, e.g. my_app, security — or leave blank for none)"
+
+If **found:** flag as `existing` — no further questions for this project.
+
+### Step 4 — What next?
+
+`AskUserQuestion`:
+- **"Add another project"** → return to Step 3 (within the current repo context)
+- **"Add another repo"** → return to Step 2
+- **"Done"** → proceed to Step 5
 
 ### Step 5 — Confirm
 
-Present full summary (workspace + all repos + all projects + schemas). Use `AskUserQuestion` to confirm.
+Build and display a scaffold plan in this format:
+
+```
+Workspace
+  tuckersaurus/ws-sample                                     [CREATE]
+
+Source repos & projects
+  tuckersaurus/new-repo (private)                            [CREATE]
+    └── NewRepo.Web        App    schemas: new_repo          [CREATE]
+
+  tuckersaurus/existing-repo                                 [LINK]
+    └── ExistingProject.Web  App                             [LINK]
+    └── NewProject.API       App    schemas: new_project     [CREATE]
+```
+
+`AskUserQuestion`:
+- **"Looks good, scaffold it"** → proceed to Step 6
+- **"Go back and edit"** → return to Step 1
 
 ---
 
-## Scaffold phase (Steps 6–13)
+## Scaffold phase — disk only (Steps 6–10)
 
-All sub-skill calls pass args explicitly — no interactive prompts fire inside the sub-skills.
+Nothing is committed or pushed in this phase.
 
-### Step 6 — Create workspace
+### Step 6 — Clone any GitHub-only repos
 
-```
-/new-workspace-repo workspace_owner=<workspace_owner> ws_repository=<ws_repository> push=false
-```
-
-### Step 7 — Create each source repo
-
-For each source repo:
-```
-/new-source-repo owner=<owner> repo=<repo> push=false
+For each source repo flagged `existing, needs-clone`:
+```bash
+git clone git@github.com:<owner>/<repo>.git \
+  $HOME/projects/source/github/<owner>/<repo>
 ```
 
-### Step 8 — Create each project
+### Step 7 — Create workspace
 
-For each project in each source repo:
 ```
-/new-source-project repo=<owner>/<repo> project=<name> type=<app|library> schemas=<s1,s2> push=false
+/create-workspace-repo workspace_owner=<owner> ws_repository=<ws_repository>
 ```
-(Pass `schemas=` (empty) for projects with no schemas.)
 
-### Step 9 — Visibility
+### Step 8 — Create new source repos
 
-If `push=true` (default): ask private/public for all repos at once, or use `visibility=` arg if provided.
+For each repo flagged `new (private)` or `new (public)`:
+```
+/create-source-repo owner=<owner> repo=<repo>
+```
+Skip repos flagged `existing` or `existing, needs-clone`.
 
-If `push=false`: skip Steps 9–12.
+### Step 9 — Create new projects
 
-### Step 10 — Push workspace to GitHub
+For each project flagged `new (App)` or `new (Library)`:
+```
+/create-source-project repo=<owner>/<repo> project=<name> type=<app|library> schemas=<s1,s2>
+```
+Pass `schemas=` (empty string) for projects with no schemas. Skip projects flagged `existing`.
+
+### Step 10 — Patch workspace config
+
+For every project across all source repos (both `new` and `existing`):
+```
+/update-workspace-repo workspace=<owner>/<ws_repository> repo=<owner>/<repo> source_package=<repo_name> project=<name> type=<app|library>
+```
+where `source_package` is the part after `/` in `<owner>/<repo>`. Call once per project — the skill handles repo-level patches automatically on the first project from each repo.
+
+---
+
+## GitHub phase (Step 11)
+
+`AskUserQuestion`:
+- **"Yes, push to GitHub"** → proceed below
+- **"No, keep local only"** → skip to Step 12
+
+For each **new** repo — workspace first, then source repos in collection order:
 
 ```bash
-gh repo create <workspace_owner>/<ws_repository> --<visibility> \
-  --source="$HOME/projects/source/github/<workspace_owner>/<ws_repository>" \
-  --remote=origin --push
-```
-
-### Step 11 — Push each source repo to GitHub
-
-For each source repo:
-```bash
-gh repo create <owner>/<repo> --<visibility> \
+git -C $HOME/projects/source/github/<owner>/<repo> add .
+git -C $HOME/projects/source/github/<owner>/<repo> commit -m "chore: initial scaffold"
+gh repo create <owner>/<repo> --private \
   --source="$HOME/projects/source/github/<owner>/<repo>" \
   --remote=origin --push
 ```
 
-### Step 12 — Patch workspace for each source repo
+Use `--public` for repos flagged as `public`. The commit here captures the full initial state — cookiecutter output plus all workspace wiring — in a single first commit. No branch or PR needed; direct-to-main is correct for initial repo creation only.
 
-For each source repo (workspace already has a remote from Step 10):
-```
-/add-source-repo workspace=<workspace_owner>/<ws_repository> repo=<owner>/<repo> source_package=<repo_name> projects=<name>:<type>[,<name>:<type>] push=true visibility=<visibility>
-```
-where `source_package` = the part after `/` in `<owner>/<repo>` (matches the package default set by `new-source-repo`).
+For **existing** source repos: nothing to push — they were not modified.
 
-If `push=false`:
-```
-/add-source-repo workspace=<workspace_owner>/<ws_repository> repo=<owner>/<repo> source_package=<repo_name> projects=<name>:<type>[,<name>:<type>] push=false
-```
+---
 
-### Step 13 — Print completion summary
+## Step 12 — Completion summary
 
-Print all local paths and GitHub URLs (if pushed).
+Print:
+- All local paths created or linked
+- GitHub URLs for any repos that were pushed (if Step 11 ran)
