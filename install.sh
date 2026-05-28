@@ -3,6 +3,18 @@ set -e
 
 echo "Symlinking .gitconfig..."
 ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
+# VS Code injects a runtime-specific credential helper into ~/.gitconfig on every attach.
+# skip-worktree tells git to ignore local modifications so it never shows as a diff.
+git -C ~/dotfiles update-index --skip-worktree .gitconfig
+echo "  done."
+
+echo "Switching dotfiles remote to SSH..."
+git -C ~/dotfiles remote set-url origin git@github.com:tuckersaurus/dotfiles.git
+echo "  done."
+
+echo "Fixing ~/.claude ownership (may have been created by root)..."
+sudo mkdir -p ~/.claude
+sudo chown -R "$(whoami):$(whoami)" ~/.claude
 echo "  done."
 
 echo "Symlinking Claude CLAUDE.md..."
@@ -48,14 +60,12 @@ fi
 
 if command -v cookiecutter &>/dev/null; then
     echo "cookiecutter already installed, skipping."
-elif command -v python3 &>/dev/null; then
-    echo "Installing cookiecutter..."
-    curl -sS https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py
-    python3 /tmp/get-pip.py --user --break-system-packages --quiet
-    python3 -m pip install cookiecutter --break-system-packages --quiet
-    echo "  done."
 else
-    echo "python3 not found, skipping cookiecutter installation."
+    echo "Installing cookiecutter via pipx..."
+    sudo apt-get update -qq
+    sudo apt-get install -y pipx python3 python3-venv --quiet
+    pipx install cookiecutter
+    echo "  done."
 fi
 
 echo "Dotfiles installed. Run: source ~/.bashrc"
