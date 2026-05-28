@@ -6,6 +6,7 @@ ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
 echo "  done."
 
 echo "Symlinking Claude CLAUDE.md..."
+mkdir -p ~/.claude
 ln -sf ~/dotfiles/claude/CLAUDE.md ~/.claude/CLAUDE.md
 echo "  done."
 
@@ -25,7 +26,9 @@ ln -sf ~/dotfiles/.gitignore_global ~/.gitignore_global
 echo "  done."
 
 echo "Setting script permissions..."
-chmod +x ~/dotfiles/scripts/*.sh
+for f in ~/dotfiles/scripts/*.sh; do
+    [ -f "$f" ] && chmod +x "$f"
+done
 echo "  done."
 
 echo "Adding dotfiles source block to ~/.bashrc..."
@@ -49,7 +52,7 @@ elif command -v python3 &>/dev/null; then
     echo "Installing cookiecutter..."
     curl -sS https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py
     python3 /tmp/get-pip.py --user --break-system-packages --quiet
-    ~/.local/bin/pip install cookiecutter --break-system-packages --quiet
+    python3 -m pip install cookiecutter --break-system-packages --quiet
     echo "  done."
 else
     echo "python3 not found, skipping cookiecutter installation."
