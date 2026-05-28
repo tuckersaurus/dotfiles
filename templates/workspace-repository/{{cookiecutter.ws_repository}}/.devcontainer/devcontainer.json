@@ -35,7 +35,8 @@
       ],
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash",
-        "remote.autoForwardPorts": false
+        "remote.autoForwardPorts": false,
+        "todo-tree.ripgrep.ripgrep": "/usr/bin/rg"
       }
     }
   },
