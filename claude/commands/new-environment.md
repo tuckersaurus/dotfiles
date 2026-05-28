@@ -162,6 +162,7 @@ git -C $HOME/projects/source/github/<owner>/<repo> commit -m "chore: initial sca
 gh repo create <owner>/<repo> --private \
   --source="$HOME/projects/source/github/<owner>/<repo>" \
   --remote=origin --push
+git -C $HOME/projects/source/github/<owner>/<repo> branch --set-upstream-to=origin/main main
 ```
 
 Use `--public` for repos flagged as `public`. The commit here captures the full initial state — cookiecutter output plus all workspace wiring — in a single first commit. No branch or PR needed; direct-to-main is correct for initial repo creation only.
