@@ -11,13 +11,15 @@ Clean up the local git repo: switch to main, pull latest, and delete any local b
 
 2. If not already on `main`, run `git checkout main`. If the checkout fails due to uncommitted changes, stop and tell the user to stash or commit first.
 
-3. Run `git pull` to bring main up to date with origin.
+3. Run `git pull --prune` to bring main up to date with origin and remove stale remote-tracking refs in one step.
 
-4. Find orphaned local branches — branches whose upstream is gone:
+4. Find orphaned local branches — branches whose upstream is gone or was never set:
    ```
-   git branch -vv | grep ': gone]'
+   git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads \
+     | grep -vE '^(main|master) ' \
+     | grep -E '\[gone\]|^[^ ]+ $'
    ```
-   Parse the branch names from the output (first field after trimming leading whitespace and `*`).
+   Parse the branch name from the first field of each matching line. This catches both branches marked `[gone]` (upstream configured but remote deleted) and branches that lost their tracking ref entirely after a prune.
 
 5. If no orphaned branches are found, report that the repo is already clean and stop.
 
