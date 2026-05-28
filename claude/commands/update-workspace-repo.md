@@ -27,7 +27,7 @@ If **already present**: skip all repo-level patches and proceed to Step 2.
 
 If **not present**, apply the following patches:
 
-**`project.code-workspace`** — insert before `// <repo-roots>`, keep marker:
+**`<ws_repo>.code-workspace`** — insert before `// <repo-roots>`, keep marker:
 ```json
     ,
     {
@@ -74,13 +74,13 @@ If **not present**, apply the following patches:
 
 ## Step 2 — Project-level patches (idempotent)
 
-Scan workspace `project.slnx` for `<Project Path=".../dotnet/src/<project>/..."`.
+Scan workspace `<ws_repo>.slnx` for `<Project Path=".../dotnet/src/<project>/..."`.
 
 If **already present**: skip all project-level patches and proceed to Step 3.
 
 If **not present**, apply the following patches:
 
-**`project.code-workspace`** — insert before `// <app-projects>` (app) or `// <library-projects>` (library), keep marker:
+**`<ws_repo>.code-workspace`** — insert before `// <app-projects>` (app) or `// <library-projects>` (library), keep marker:
 ```json
     ,
     {
@@ -90,7 +90,7 @@ If **not present**, apply the following patches:
     // <app-projects>
 ```
 
-**`project.slnx`** — insert before `<!-- <additional-source-projects> -->`, keep marker:
+**`<ws_repo>.slnx`** — insert before `<!-- <additional-source-projects> -->`, keep marker:
 ```xml
   <Project Path="../source/<repo>/dotnet/src/<project>/<project>.csproj" />
   <!-- <additional-source-projects> -->

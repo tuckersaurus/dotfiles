@@ -4,9 +4,14 @@
 
 \getenv svc_user DB_USER
 \getenv svc_password DB_PASSWORD
+\getenv db_name DB_NAME
 
 -- Create the shared dev service user.
 CREATE USER IF NOT EXISTS :"svc_user" WITH PASSWORD :'svc_password';
+
+-- Create the app database and switch into it for all schema setup and grants.
+CREATE DATABASE :"db_name";
+\c :"db_name"
 
 -- Source each project's schema definitions.
 -- <additional-source-repos>

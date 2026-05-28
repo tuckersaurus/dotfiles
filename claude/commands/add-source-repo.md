@@ -33,7 +33,7 @@ All lookups are silent — no output to the user unless an action is required.
 If `workspace=` arg provided: resolve path silently. Proceed to Step 2.
 
 If not provided, scan silently:
-1. **Disk:** `find ~/projects/source/github -maxdepth 2 -name "project.code-workspace" 2>/dev/null`
+1. **Disk:** `find ~/projects/source/github -maxdepth 2 -name "*.code-workspace" 2>/dev/null`
 2. **GitHub:** `gh repo list tuckersaurus --json name --jq '.[] | select(.name | startswith("ws-")) | .name'` — exclude any already found on disk
 
 Combine both lists. For each GitHub-only result, append `(GitHub)` to the name so the user knows it isn't local yet.
