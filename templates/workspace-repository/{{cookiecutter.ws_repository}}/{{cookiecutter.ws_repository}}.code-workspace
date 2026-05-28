@@ -14,6 +14,11 @@
     // <app-projects>
     // <library-projects>
     // <repo-roots>
+    ,
+    {
+      "name": "⚙️ dotfiles",
+      "path": "/home/vscode/dotfiles"
+    }
   ],
   "settings": {
     "files.associations": {
@@ -26,7 +31,7 @@
       "**/bin": true,
       "**/obj": true
     },
-    "dotnet.defaultSolution": "project.slnx",
+    "dotnet.defaultSolution": "{{cookiecutter.ws_repository}}.slnx",
     "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
     // Formatting settings
     "[razor]": {
