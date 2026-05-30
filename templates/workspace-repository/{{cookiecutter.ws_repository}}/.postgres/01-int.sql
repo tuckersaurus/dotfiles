@@ -14,6 +14,7 @@ CREATE DATABASE :"db_name";
 \c :"db_name"
 
 -- Source each project's schema definitions.
+-- \i /project/source/<repo>/postgres/init.sql
 -- <additional-source-repos>
 
 -- Grant the service user access to every non-system schema created above.
