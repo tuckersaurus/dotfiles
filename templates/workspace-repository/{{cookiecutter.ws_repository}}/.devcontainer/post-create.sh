@@ -9,7 +9,12 @@ trap 'on_error $LINENO' ERR
 
 echo "post-create.sh ..."
 
+# Docker creates parent directories as root when mounting a single file into a non-existent path.
+# Fix ownership so Claude Code (and anything else) can write inside ~/.claude/.
+sudo chown vscode:vscode /home/vscode/.claude
+
 # Required by the Todo-Tree extension (vscode-ripgrep was renamed to @vscode/ripgrep, breaking bundled resolution)
+sudo apt-get update -y
 sudo apt-get install -y ripgrep
 
 # Install EF Core CLI tool
