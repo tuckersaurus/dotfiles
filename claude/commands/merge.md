@@ -3,7 +3,7 @@ Merge a pull request into its base branch.
 ## Default behaviour
 
 - **Strategy**: Squash and Merge
-- **Branch deletion**: prompted after merge (deletes both local and remote)
+- **Branch deletion**: asked before merge, defaults to Yes — deletes remote (via `--delete-branch`) and local (via `/tidy --yes`)
 - Override strategy by appending `--rebase` or `--merge` to the invocation
 
 ## Arguments
@@ -40,31 +40,20 @@ Merge a pull request into its base branch.
      - "Proceed anyway" — continue to step 5
      - "Cancel — wait for checks to finish" — stop
 
-5. **Confirm the merge** using `AskUserQuestion`:
+5. **Ask about branch deletion** using `AskUserQuestion` (before any merge commands):
+   - "Yes — delete `<headRefName>` after merge (local + remote)" ← default
+   - "No — keep the branch"
+
+6. **Confirm the merge** using `AskUserQuestion`:
    - "Squash and merge" (or the override strategy label)
    - "Cancel"
 
-6. **Merge:**
-   ```
-   gh pr merge <number> --repo <owner>/<repo> --squash
-   ```
+7. **Merge:**
+   - If yes to deletion: `gh pr merge <number> --repo <owner>/<repo> --squash --delete-branch`
+   - If no: `gh pr merge <number> --repo <owner>/<repo> --squash`
+
    Swap `--squash` for `--rebase` or `--merge` if an override was passed.
 
-7. **Ask about branch deletion** using `AskUserQuestion`:
-   - "Yes — delete `<headRefName>` (local + remote)"
-   - "No — keep the branch"
-
-   If yes, run both:
-   ```
-   git push origin --delete <headRefName>
-   git branch -D <headRefName>
-   ```
-   If the local branch doesn't exist (e.g. PR was opened from a fork or a different machine), skip the `git branch -D` step silently.
-
-8. **Switch to the base branch and pull:**
-   ```
-   git checkout <baseRefName>
-   git pull
-   ```
+8. **Invoke `/tidy --yes`** — switches to the base branch, pulls, and auto-deletes any orphaned local branches (including `<headRefName>` if the remote was deleted in step 7).
 
 9. **Confirm success** — print the merged PR title and confirm the base branch is up to date.
