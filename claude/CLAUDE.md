@@ -89,6 +89,26 @@ lists what changed in the current version as a short bullet list. This makes it
 easy for the user to review what was updated without reading the whole plan.
 Previous versions' change notes should be kept beneath the current one.
 
+## Continuous Improvement
+
+### Retrospectives after first-of-a-kind tasks
+
+After completing any significant new workflow or first-time task (first UI page, first deployment, first test suite, first auth flow, etc.), proactively suggest a retrospective. The goal is to capture what was painful, what was discovered, and whether templates, CLAUDE.md files, tooling, or memory should be updated before the next similar task.
+
+Don't wait to be asked — flag it at the end of the task: *"This was the first time we did X — worth a quick retrospective to update the templates/docs?"*
+
+### Template drift
+
+When making a config or tooling change to a live workspace or project, check whether the same change should be applied to the corresponding cookiecutter template(s) in `~/dotfiles/templates/`. If so, flag it explicitly — don't leave templates to drift silently behind the live environment.
+
+### Memory hygiene
+
+At the start of a session, if project memory files exist (`.claude/memory/`), scan them for stale entries — items marked as "pending", "next steps", or "TODO" that may have since been completed. Flag any that look stale and offer to clean them up rather than carrying outdated context forward.
+
+### Pattern → instruction propagation
+
+When a non-obvious pattern, constraint, or gotcha is discovered during a task (a framework quirk, a tooling workaround, a naming convention), proactively suggest adding it to the relevant CLAUDE.md file rather than only recording it in memory. Memory is for context; instructions are for behaviour. Patterns that will affect how future code is written belong in instructions.
+
 ## Environment
 
 ### Dotfiles & Devcontainer Propagation
