@@ -45,8 +45,14 @@ If **not present**, apply the following patches:
 
 **`.postgres/01-int.sql`** — insert before `-- <additional-source-repos>`, keep marker:
 ```sql
-\i /project/source/<repo>/postgres/init.sql
+\i /schemas/<repo>/init.sql
 -- <additional-source-repos>
+```
+
+**`.devcontainer/docker-compose.yml`** (postgres service) — insert before `# <additional-source-repo-schemas>`, keep marker:
+```yaml
+      - ${HOME}/projects/source/github/<owner>/<repo>/postgres:/schemas/<repo>:ro
+      # <additional-source-repo-schemas>
 ```
 
 **`package.json`**:

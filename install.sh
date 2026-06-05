@@ -12,6 +12,11 @@ echo "Switching dotfiles remote to SSH..."
 git -C ~/dotfiles remote set-url origin git@github.com:tuckersaurus/dotfiles.git
 echo "  done."
 
+echo "Enabling full branch tracking for dotfiles (VS Code clones with --single-branch)..."
+git -C ~/dotfiles config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+git -C ~/dotfiles fetch --all --quiet
+echo "  done."
+
 echo "Fixing ~/.claude ownership (may have been created by root)..."
 sudo mkdir -p ~/.claude
 sudo chown -R "$(whoami):$(whoami)" ~/.claude
@@ -38,7 +43,7 @@ ln -sf ~/dotfiles/.gitignore_global ~/.gitignore_global
 echo "  done."
 
 echo "Setting script permissions..."
-for f in ~/dotfiles/scripts/*.sh; do
+for f in ~/dotfiles/scripts/*; do
     [ -f "$f" ] && chmod +x "$f"
 done
 echo "  done."
