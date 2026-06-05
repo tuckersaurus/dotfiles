@@ -1,5 +1,7 @@
 Create a new git branch with a consistent name derived from the branch's purpose.
 
+Accepts an optional repo path argument (e.g. `/branch ~/dotfiles`). If provided, all git commands run with `git -C <path>`. If omitted, operates on the current working directory.
+
 ## Branch naming format
 
 ```
@@ -15,7 +17,7 @@ Rules:
 
 ## Steps
 
-1. Run `git status` and `git diff HEAD` in parallel. Also note whether the user provided text after `/branch`.
+1. Determine the git prefix: if a repo path argument was provided, use `git -C <path>` for all git commands. Otherwise use plain `git`. Note any remaining text as the branch purpose description.
 
 2. **Determine the branch name source:**
 
@@ -46,8 +48,8 @@ Rules:
 
 5. Once a name is confirmed, run:
    ```
-   git checkout -b <branch-name>
-   git push -u origin <branch-name>
+   git [-C <path>] checkout -b <branch-name>
+   git [-C <path>] push -u origin <branch-name>
    ```
 
 6. Confirm success and print the branch name.

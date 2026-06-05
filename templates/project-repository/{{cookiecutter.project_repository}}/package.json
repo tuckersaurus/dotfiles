@@ -4,6 +4,7 @@
   "private": true,
   "workspaces": [],
   "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0",
     "cpx2": "^7.0.0",
     "esbuild": "^0.27.2",
     "eslint": "^8.0.0",
@@ -13,6 +14,7 @@
     "stylelint": "^17.0.0",
     "stylelint-config-standard-scss": "^17.0.0",
     "stylelint-scss": "^7.0.0",
+    "tailwindcss": "^4.0.0",
     "typescript": "^5.9.3"
   },
   "scripts": {
@@ -28,6 +30,6 @@
     "-- BOOTSTRAP --": "Command to install all dependencies for the project.",
     "bootstrap": "npm ci",
     "-- WEB --": "Web-specific scripts exposed for workspace coordination.",
-    "watch:web": "echo \"Add web watch scripts here.\""
+    "watch:web": "echo \"Replace with Tailwind watch, e.g: ../../../node_modules/.bin/tailwindcss -i ./wwwroot/css/app.css -o ./wwwroot/css/app.output.css --watch\""
   }
 }

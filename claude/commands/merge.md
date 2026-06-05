@@ -14,9 +14,11 @@ Merge a pull request into its base branch.
 
 ## Steps
 
-1. **Derive the repo slug** from the remote URL:
+1. Determine the git prefix: if a repo path argument was provided (e.g. `/merge ~/dotfiles 42`), use `git -C <path>` for all git commands. Otherwise use plain `git`.
+
+   **Derive the repo slug** from the remote URL:
    ```
-   git remote get-url origin
+   git [-C <path>] remote get-url origin
    ```
    Parse `owner/repo` from the result (handles both SSH `git@github.com:owner/repo.git` and HTTPS `https://github.com/owner/repo.git`).
 

@@ -2,14 +2,66 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Watch Assets",
+      "label": "Watch : <ProjectName>",
       "type": "shell",
-      "command": "npm run watch",
-      "problemMatcher": [],
+      // Replace <ProjectName> with your .NET project name (e.g. "MyApp.Web").
+      // --non-interactive: C# changes that can't hot-reload trigger an automatic rebuild+restart
+      // rather than prompting. Razor/CSS changes still hot-reload in-browser without a restart.
+      // Close this terminal panel between F5 launches to reap any zombie dotnet processes.
+      "command": "fuser -k 5000/tcp 2>/dev/null; npm run watch:web & dotnet watch run --non-interactive --launch-profile dev-container --project ${workspaceFolder:🚀 <ProjectName>}/<ProjectName>.csproj",
+      "problemMatcher": [
+        "$msCompile",
+        {
+          "pattern": [{ "regexp": ".", "file": 1, "location": 2, "message": 3 }],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "dotnet watch",
+            "endsPattern": "Now listening on:"
+          }
+        }
+      ],
+      "group": { "kind": "build", "isDefault": true },
+      "isBackground": true,
+      "runOptions": { "reevaluateOnRerun": true },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "close": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder:🏁 Repository : <source-repo-name>}",
+        "env": { "ASPNETCORE_URLS": "http://0.0.0.0:5000" }
+      }
+    },
+    {
+      "label": "Watch : <ProjectName> (no debug)",
+      "type": "shell",
+      // Same as debug variant but without --non-interactive — dotnet watch applies all hot reload
+      // changes freely since no debugger is attached. C# changes are applied in-process.
+      // Used by the actboy168.tasks status bar button for hot reload mode.
+      "command": "fuser -k 5000/tcp 2>/dev/null; npm run watch:web & dotnet watch run --launch-profile dev-container --project ${workspaceFolder:🚀 <ProjectName>}/<ProjectName>.csproj",
+      "problemMatcher": [
+        "$msCompile",
+        {
+          "pattern": [{ "regexp": ".", "file": 1, "location": 2, "message": 3 }],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "dotnet watch",
+            "endsPattern": "Now listening on:"
+          }
+        }
+      ],
       "group": "build",
       "isBackground": true,
-      "runOptions": {
-        "reevaluateOnRerun": true
+      "runOptions": { "reevaluateOnRerun": true },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "close": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder:🏁 Repository : <source-repo-name>}",
+        "env": { "ASPNETCORE_URLS": "http://0.0.0.0:5000" }
       }
     }
     // <additional-tasks>

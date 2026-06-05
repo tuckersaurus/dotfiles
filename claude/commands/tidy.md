@@ -1,21 +1,24 @@
 Clean up the local git repo: switch to main, pull latest, and delete any local branches whose remote tracking branch has been deleted.
 
+Accepts an optional repo path argument (e.g. `/tidy ~/dotfiles`). If provided, all git commands run with `git -C <path>`. If omitted, operates on the current working directory.
+
 ## Arguments
 
 - **No args** — interactive mode: prompts before deleting orphaned branches
 - **`--yes`** — non-interactive mode: auto-deletes all orphaned branches without prompting (used by `/merge`)
+- **`<path>`** — repo path, e.g. `~/dotfiles` or `/project/source/zombie-miner`
 
 ## Steps
 
-1. Note whether `--yes` was passed as an argument. Check the current branch with `git branch --show-current`.
+1. Determine the git prefix: if a repo path argument was provided, use `git -C <path>` for all git commands. Otherwise use plain `git`. Note whether `--yes` was also passed.
 
-2. If not already on `main`, run `git checkout main`. If the checkout fails due to uncommitted changes, stop and tell the user to stash or commit first.
+2. Check the current branch with `git [-C <path>] branch --show-current`. If not already on `main`, run `git [-C <path>] checkout main`. If the checkout fails due to uncommitted changes, stop and tell the user to stash or commit first.
 
-3. Run `git pull --prune` to bring main up to date with origin and remove stale remote-tracking refs in one step.
+3. Run `git [-C <path>] pull --prune` to bring main up to date with origin and remove stale remote-tracking refs in one step.
 
 4. Find orphaned local branches — branches whose upstream is gone or was never set:
    ```
-   git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads \
+   git [-C <path>] for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads \
      | grep -vE '^(main|master) ' \
      | grep -E '\[gone\]|^[^ ]+ $'
    ```
@@ -31,7 +34,7 @@ Clean up the local git repo: switch to main, pull latest, and delete any local b
 
 7. For each confirmed branch, run:
    ```
-   git branch -D <branch-name>
+   git [-C <path>] branch -D <branch-name>
    ```
 
 8. Report how many branches were deleted and confirm main is up to date.

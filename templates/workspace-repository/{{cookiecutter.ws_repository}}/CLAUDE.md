@@ -32,6 +32,16 @@ Initialization runs from `.postgres/01-int.sql` on first container start. It:
 
 To restore a production dump, run `.scripts/refresh-database.sh` then restart the container.
 
+## Claude Memory
+
+Project memory lives in `.claude/memory/` in this repo and is symlinked into Claude Code's memory system on every container attach (`post-attach.sh`). This means memory survives container rebuilds.
+
+**All project-specific memory belongs in `.claude/memory/`** — TODOs, architectural decisions, discovered patterns, next steps. There is no meaningful local-only alternative for project memory in this setup.
+
+**Do not store** in `.claude/memory/`:
+- `settings.local.json` or any credentials (gitignored)
+- User preferences or cross-project workflow patterns — those belong in `~/dotfiles/claude/`
+
 ## Environment
 
 Copy `.devcontainer/.env.sample` to `.devcontainer/.env` and fill in the required values before starting the container.

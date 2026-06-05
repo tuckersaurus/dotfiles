@@ -33,11 +33,14 @@ Always confirm with the user before running any of the following, regardless of 
 
 ## Git Workflow
 
-Always use the predefined skills for git operations — never run these ad-hoc, even mid-task:
+Always use the predefined skills for git operations — never run raw git commands ad-hoc, even mid-task, even in secondary repos like `~/dotfiles`:
 
 - Branching → `/branch` skill
 - Committing → `/commit` skill
-- Pull requests → `/pr` skill
+- Opening pull requests → `/open-pr` skill
+- Merging pull requests → `/merge` skill
+
+This applies to **every repo** touched in a session, not just the primary working directory. When committing changes in a secondary repo (dotfiles, source repos, etc.), invoke `/commit` for that repo explicitly — do not run `git add` + `git commit` directly.
 
 Before committing, assess whether the changes span distinct concerns. If so, suggest splitting into multiple commits and explain the proposed breakdown — let the user decide before proceeding.
 
@@ -45,7 +48,7 @@ All repos, including `~/dotfiles`, use branches and PRs. Never commit directly t
 
 ## Custom Skills
 
-Custom skills (`/commit`, `/branch`, `/pr`, and any others in `~/.claude/commands/`) were written collaboratively, so their commands are implicitly trusted:
+Custom skills (`/commit`, `/branch`, `/open-pr`, `/merge`, and any others in `~/.claude/commands/`) were written collaboratively, so their commands are implicitly trusted:
 
 - **User-invoked skill** (`/commit`, `/branch`, etc.): run it immediately — no "are you sure" check, no permission prompts. The only interactions should be the skill's own questions (e.g. options, split-commit suggestions).
 - **Claude-invoked skill**: ask the user before invoking.
@@ -88,6 +91,26 @@ Immediately after the version header, include a **Changes in v#** section that
 lists what changed in the current version as a short bullet list. This makes it
 easy for the user to review what was updated without reading the whole plan.
 Previous versions' change notes should be kept beneath the current one.
+
+## Continuous Improvement
+
+### Retrospectives after first-of-a-kind tasks
+
+After completing any significant new workflow or first-time task (first UI page, first deployment, first test suite, first auth flow, etc.), proactively suggest a retrospective. The goal is to capture what was painful, what was discovered, and whether templates, CLAUDE.md files, tooling, or memory should be updated before the next similar task.
+
+Don't wait to be asked — flag it at the end of the task: *"This was the first time we did X — worth a quick retrospective to update the templates/docs?"*
+
+### Template drift
+
+When making a config or tooling change to a live workspace or project, check whether the same change should be applied to the corresponding cookiecutter template(s) in `~/dotfiles/templates/`. If so, flag it explicitly — don't leave templates to drift silently behind the live environment.
+
+### Memory hygiene
+
+At the start of a session, if project memory files exist (`.claude/memory/`), scan them for stale entries — items marked as "pending", "next steps", or "TODO" that may have since been completed. Flag any that look stale and offer to clean them up rather than carrying outdated context forward.
+
+### Pattern → instruction propagation
+
+When a non-obvious pattern, constraint, or gotcha is discovered during a task (a framework quirk, a tooling workaround, a naming convention), proactively suggest adding it to the relevant CLAUDE.md file rather than only recording it in memory. Memory is for context; instructions are for behaviour. Patterns that will affect how future code is written belong in instructions.
 
 ## Environment
 

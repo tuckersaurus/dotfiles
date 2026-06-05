@@ -1,6 +1,16 @@
 {
   "version": "0.2.0",
   "configurations": [
+    {
+      "name": "<ProjectName>",
+      "type": "coreclr",
+      "request": "attach",
+      // dotnet watch runs the app with --non-interactive (preLaunchTask).
+      // Razor/CSS changes hot-reload in-browser; C# changes trigger auto-restart and re-attach.
+      // Replace <ProjectName> with your .NET project name (e.g. "MyApp.Web").
+      "processName": "<ProjectName>",
+      "preLaunchTask": "Watch : <ProjectName>"
+    }
     // <additional-launch-configs>
   ]
 }
