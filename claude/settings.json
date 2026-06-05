@@ -33,7 +33,11 @@
       "Bash(basename *)",
       "Bash(gh repo create *)",
       "Bash(mkdir *)",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "Bash(cd *)",
+      "Bash(ln *)",
+      "Bash(npm *)",
+      "Bash(npx *)"
     ]
   }
 }
