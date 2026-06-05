@@ -1,4 +1,8 @@
-Commit staged and unstaged changes in the current git repo.
+Commit staged and unstaged changes in a git repo.
+
+Accepts an optional repo path argument (e.g. `/commit ~/dotfiles`). If provided, all git commands run with `git -C <path>`. If omitted, operates on the current working directory.
+
+**Important:** This skill must be invoked once per repo that has changes — never bypass it with raw `git add` + `git commit` commands, even for secondary repos like `~/dotfiles`.
 
 ## Commit message format
 
@@ -25,26 +29,28 @@ Rules:
 
 ## Steps
 
-1. Run these in parallel:
-   - `git status` to see staged/unstaged/untracked files
-   - `git diff HEAD` to see all current changes
-   - `git branch --show-current` to check the active branch
+1. Determine the git prefix: if a repo path argument was provided, use `git -C <path>` for all git commands. Otherwise use plain `git`.
 
-2. **If the current branch is `main` (or `master`):**
-   - Run `git branch --list` to find all local branches other than main
+2. Run these in parallel:
+   - `git [-C <path>] status` to see staged/unstaged/untracked files
+   - `git [-C <path>] diff HEAD` to see all current changes
+   - `git [-C <path>] branch --show-current` to check the active branch
+
+3. **If the current branch is `main` (or `master`):**
+   - Run `git [-C <path>] branch --list` to find all local branches other than main
    - If other branches exist, use `AskUserQuestion` to let the user choose:
      - One option per existing branch (show the branch name)
      - A final option: "Create a new branch"
    - If no other branches exist, skip straight to the "Create a new branch" path
-   - **If the user picks an existing branch:** run `git checkout <branch>` and continue to Step 3
-   - **If the user picks "Create a new branch":** invoke the `/branch` skill now — do not create the branch any other way. After `/branch` completes, continue to Step 3.
+   - **If the user picks an existing branch:** run `git [-C <path>] checkout <branch>` and continue to Step 4
+   - **If the user picks "Create a new branch":** invoke the `/branch` skill now — do not create the branch any other way. After `/branch` completes, continue to Step 4.
 
-3. Analyze the diff and draft a commit message following the format above.
+4. Analyze the diff and draft a commit message following the format above.
 
-4. Output the draft commit message as plain text in the conversation so the user can read it in full. Then use `AskUserQuestion` with a simple confirm/edit choice — do not put the message content inside the question options.
+5. Output the draft commit message as plain text in the conversation so the user can read it in full. Then use `AskUserQuestion` with a simple confirm/edit choice — do not put the message content inside the question options.
 
-5. Once confirmed, stage the relevant files (prefer specific filenames over `git add -A`) and commit using a HEREDOC with the approved message.
+6. Once confirmed, stage the relevant files with `git [-C <path>] add` (prefer specific filenames over `git add -A`) and commit using a HEREDOC with the approved message.
 
-6. Run `git status` to confirm the commit succeeded.
+7. Run `git [-C <path>] status` to confirm the commit succeeded.
 
-7. Push: `git push`
+8. Push: `git [-C <path>] push`
