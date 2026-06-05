@@ -31,9 +31,11 @@
         "editorconfig.editorconfig",
         "eamodio.gitlens",
         "github.vscode-pull-request-github",
-        "Anthropic.claude-code"
+        "Anthropic.claude-code",
+        "actboy168.tasks"
       ],
       "settings": {
+        "tasks.statusbar.filter": ["Watch : <ProjectName> (no debug)"],
         "terminal.integrated.defaultProfile.linux": "bash",
         "remote.autoForwardPorts": false,
         "todo-tree.ripgrep.ripgrep": "/usr/bin/rg"

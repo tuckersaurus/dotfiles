@@ -30,6 +30,10 @@ for source_dir in /project/source/*/; do
   fi
 done
 
+# Install Playwright Chromium for MCP browser automation
+npx playwright install chromium
+npx playwright install-deps chromium
+
 # Restore the workspace solution stub for IDE tooling
 dotnet restore \
   || echo "Warning: Solution restore failed — errors may be preventing a successful build."
