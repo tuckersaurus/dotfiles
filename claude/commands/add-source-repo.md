@@ -167,7 +167,12 @@ gh pr create --repo <ws_owner>/<ws_repo> \
 ### Step 11 — Push source repo (if new)
 
 Only if the source repo was flagged `new (private)` or `new (public)` in Step 2:
-- If source repo already has a remote (`git -C <path> remote get-url origin` succeeds): `git -C <path> push -u origin main`
+- If source repo already has a remote (`git -C <path> remote get-url origin` succeeds):
+  ```bash
+  git -C <path> config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+  git -C <path> fetch origin
+  git -C <path> push -u origin main
+  ```
 - If no remote (repo was just created locally):
   ```bash
   git -C $HOME/projects/source/github/<owner>/<repo> add .
@@ -175,6 +180,8 @@ Only if the source repo was flagged `new (private)` or `new (public)` in Step 2:
   gh repo create <owner>/<repo> --<visibility> \
     --source="$HOME/projects/source/github/<owner>/<repo>" \
     --remote=origin --push
+  git -C $HOME/projects/source/github/<owner>/<repo> config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+  git -C $HOME/projects/source/github/<owner>/<repo> fetch origin
   git -C $HOME/projects/source/github/<owner>/<repo> branch --set-upstream-to=origin/main main
   ```
   This is initial creation — a single direct push to main is correct here.

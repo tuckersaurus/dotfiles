@@ -162,6 +162,8 @@ git -C $HOME/projects/source/github/<owner>/<repo> commit -m "chore: initial sca
 gh repo create <owner>/<repo> --private \
   --source="$HOME/projects/source/github/<owner>/<repo>" \
   --remote=origin --push
+git -C $HOME/projects/source/github/<owner>/<repo> config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+git -C $HOME/projects/source/github/<owner>/<repo> fetch origin
 git -C $HOME/projects/source/github/<owner>/<repo> branch --set-upstream-to=origin/main main
 ```
 
