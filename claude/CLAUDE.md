@@ -69,6 +69,10 @@ Types: `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `ci`
 
 Read-only shell commands (`ls`, `find`, `cat`, `grep`, `stat`, `diff`, etc.) are in the global allow list and should never require a permission prompt. If one triggers a prompt, use the `update-config` skill to add it to the allowlist — don't ask the user each time.
 
+## Git Commands in Other Repos
+
+Always use `git -C <path> <command>` instead of `cd <path> && git <command>` when running git commands in a repo other than the current working directory. Commands starting with `cd` don't match the `Bash(git *)` permission rule and will trigger unexpected permission prompts.
+
 ## Plan Files
 
 When writing or updating a plan file during Plan Mode, include a version header

@@ -1,8 +1,13 @@
 Clean up the local git repo: switch to main, pull latest, and delete any local branches whose remote tracking branch has been deleted.
 
+## Arguments
+
+- **No args** — interactive mode: prompts before deleting orphaned branches
+- **`--yes`** — non-interactive mode: auto-deletes all orphaned branches without prompting (used by `/merge`)
+
 ## Steps
 
-1. Check the current branch with `git branch --show-current`.
+1. Note whether `--yes` was passed as an argument. Check the current branch with `git branch --show-current`.
 
 2. If not already on `main`, run `git checkout main`. If the checkout fails due to uncommitted changes, stop and tell the user to stash or commit first.
 
@@ -16,9 +21,11 @@ Clean up the local git repo: switch to main, pull latest, and delete any local b
 
 5. If no orphaned branches are found, report that the repo is already clean and stop.
 
-6. If orphaned branches are found, list them clearly and use `AskUserQuestion` to confirm before deleting:
-   - "Delete all N listed branches" — proceed with deletion
-   - "Cancel" — stop without deleting anything
+6. If orphaned branches are found:
+   - **`--yes` passed** — delete all orphaned branches immediately without prompting
+   - **No flag** — list them clearly and use `AskUserQuestion` to confirm before deleting:
+     - "Delete all N listed branches" — proceed with deletion
+     - "Cancel" — stop without deleting anything
 
 7. For each confirmed branch, run:
    ```
