@@ -3,7 +3,7 @@ Merge a pull request into its base branch.
 ## Default behaviour
 
 - **Strategy**: Squash and Merge
-- **Branch**: deleted after merge
+- **Branch deletion**: prompted after merge (deletes both local and remote)
 - Override strategy by appending `--rebase` or `--merge` to the invocation
 
 ## Arguments
@@ -46,8 +46,25 @@ Merge a pull request into its base branch.
 
 6. **Merge:**
    ```
-   gh pr merge <number> --repo <owner>/<repo> --squash --delete-branch
+   gh pr merge <number> --repo <owner>/<repo> --squash
    ```
    Swap `--squash` for `--rebase` or `--merge` if an override was passed.
 
-7. **Confirm success** — print the merged PR title and the name of the deleted branch.
+7. **Ask about branch deletion** using `AskUserQuestion`:
+   - "Yes — delete `<headRefName>` (local + remote)"
+   - "No — keep the branch"
+
+   If yes, run both:
+   ```
+   git push origin --delete <headRefName>
+   git branch -D <headRefName>
+   ```
+   If the local branch doesn't exist (e.g. PR was opened from a fork or a different machine), skip the `git branch -D` step silently.
+
+8. **Switch to the base branch and pull:**
+   ```
+   git checkout <baseRefName>
+   git pull
+   ```
+
+9. **Confirm success** — print the merged PR title and confirm the base branch is up to date.
