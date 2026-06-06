@@ -274,7 +274,7 @@ csharp_style_var_elsewhere = false
 # Use => for members when possible
 # Options: true | false | when_on_single_line
 csharp_style_expression_bodied_accessors = true
-csharp_style_expression_bodied_constructors = true
+csharp_style_expression_bodied_constructors = false
 csharp_style_expression_bodied_indexers = true
 csharp_style_expression_bodied_lambdas = true:suggestion
 csharp_style_expression_bodied_local_functions = true:suggestion
@@ -337,7 +337,7 @@ csharp_style_prefer_readonly_struct_member = true
 # --------------------------------
 # Require braces for code blocks
 # Options: true | false | when_multiline
-csharp_prefer_braces = false
+csharp_prefer_braces = true
 
 # Prefer simple using statement: using var file = ...
 # Options: true | false
@@ -628,10 +628,10 @@ dotnet_naming_rule.type_parameter_should_be_begins_with_t.severity = warning
 dotnet_naming_rule.type_parameter_should_be_begins_with_t.symbols = type_parameter
 dotnet_naming_rule.type_parameter_should_be_begins_with_t.style = begins_with_t
 
-# Private fields should be _camelCase
-dotnet_naming_rule.private_fields_should_be_underscore_camel_case.severity = warning
-dotnet_naming_rule.private_fields_should_be_underscore_camel_case.symbols = private_fields
-dotnet_naming_rule.private_fields_should_be_underscore_camel_case.style = underscore_camel_case
+# Private fields should be PascalCase (same as public members)
+dotnet_naming_rule.private_fields_should_be_pascal_case.severity = warning
+dotnet_naming_rule.private_fields_should_be_pascal_case.symbols = private_fields
+dotnet_naming_rule.private_fields_should_be_pascal_case.style = pascal_case
 
 # Constants should be PascalCase (like properties)
 dotnet_naming_rule.constants_should_be_pascal_case.severity = warning
@@ -730,7 +730,7 @@ dotnet_naming_style.begins_with_t.required_suffix =
 dotnet_naming_style.begins_with_t.word_separator =
 dotnet_naming_style.begins_with_t.capitalization = pascal_case
 
-# _camelCase: _firstName
+# _camelCase: _firstName (unused — kept for reference)
 dotnet_naming_style.underscore_camel_case.required_prefix = _
 dotnet_naming_style.underscore_camel_case.required_suffix =
 dotnet_naming_style.underscore_camel_case.word_separator =
