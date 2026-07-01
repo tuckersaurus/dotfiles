@@ -27,7 +27,7 @@ Merge a pull request into its base branch.
    - Otherwise: get the current branch with `git branch --show-current`, then run `gh pr list --head <branch> --repo <owner>/<repo> --json number,title,headRefName,baseRefName,state` and take the first open result
    - If no open PR is found: stop and tell the user to run `/pr` first
 
-3. **Note the PR summary** (number, title, head→base branches, strategy) — don't print it as plain text yet. It gets shown in the `preview` field of the merge-confirmation question in step 6, so it stays visible even though the `AskUserQuestion` overlay can cover preceding chat content.
+3. **Note the PR summary** (number, title, head→base branches, strategy) — don't print it as plain text yet. It gets shown in the `description` field of the merge-confirmation question in step 6, so it stays visible even though the `AskUserQuestion` overlay can cover preceding chat content. (The `preview` field is not reliably rendered in all client surfaces — confirmed not shown at all in the VS Code extension — so don't use it.)
 
 4. **Check CI status** via `gh pr checks <number> --repo <owner>/<repo>`:
    - **No checks configured** — proceed
@@ -41,13 +41,13 @@ Merge a pull request into its base branch.
    - "Yes — delete `<headRefName>` after merge (local + remote)" ← default
    - "No — keep the branch"
 
-6. **Confirm the merge** using `AskUserQuestion`. Put the PR summary from step 3 in the `preview` field of the merge option:
+6. **Confirm the merge** using `AskUserQuestion`. Put the PR summary from step 3 in the `description` field of the merge option:
    ```
    PR #<number>: <title>
    <headRefName> → <baseRefName>
    Strategy: Squash and Merge (or the override if one was passed)
    ```
-   - "Squash and merge" (or the override strategy label) — with the preview above
+   - "Squash and merge" (or the override strategy label) — with the summary above in its description
    - "Cancel"
 
 7. **Merge:**
