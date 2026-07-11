@@ -1,6 +1,11 @@
+---
+description: Create a pull request for the current branch
+argument-hint: "[repo-path]"
+---
+
 Create a pull request for the current branch.
 
-Accepts an optional repo path argument (e.g. `/open-pr ~/dotfiles`). If provided, all git commands run with `git -C <path>` and `gh` commands use the derived `--repo` flag. If omitted, operates on the current working directory.
+Accepts an optional repo path argument (e.g. `/pull-request ~/dotfiles`). If provided, all git commands run with `git -C <path>` and `gh` commands use the derived `--repo` flag. If omitted, operates on the current working directory.
 
 ## PR title format
 

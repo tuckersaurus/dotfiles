@@ -1,9 +1,14 @@
+---
+description: Merge a pull request into its base branch
+argument-hint: "[pr-number] [--rebase|--merge]"
+---
+
 Merge a pull request into its base branch.
 
 ## Default behaviour
 
 - **Strategy**: Squash and Merge
-- **Branch deletion**: asked before merge, defaults to Yes — deletes remote (via `--delete-branch`) and local (via `/tidy --yes`)
+- **Branch deletion**: asked before merge, defaults to Yes — deletes remote (via `--delete-branch`) and local (via `/sync --yes`)
 - Override strategy by appending `--rebase` or `--merge` to the invocation
 
 ## Arguments
@@ -25,7 +30,7 @@ Merge a pull request into its base branch.
 2. **Determine the target PR:**
    - If a PR number was passed as an argument: use it directly — fetch its details with `gh pr view <number> --repo <owner>/<repo> --json number,title,headRefName,baseRefName`
    - Otherwise: get the current branch with `git branch --show-current`, then run `gh pr list --head <branch> --repo <owner>/<repo> --json number,title,headRefName,baseRefName,state` and take the first open result
-   - If no open PR is found: stop and tell the user to run `/pr` first
+   - If no open PR is found: stop and tell the user to run `/pull-request` first
 
 3. **Note the PR summary** (number, title, head→base branches, strategy) — don't print it as plain text yet. It gets shown in the `description` field of the merge-confirmation question in step 6, so it stays visible even though the `AskUserQuestion` overlay can cover preceding chat content. (The `preview` field is not reliably rendered in all client surfaces — confirmed not shown at all in the VS Code extension — so don't use it.)
 
@@ -56,6 +61,6 @@ Merge a pull request into its base branch.
 
    Swap `--squash` for `--rebase` or `--merge` if an override was passed.
 
-8. **Invoke `/tidy --yes`** — switches to the base branch, pulls, and auto-deletes any orphaned local branches (including `<headRefName>` if the remote was deleted in step 7).
+8. **Invoke `/sync --yes`** — switches to the base branch, pulls, and auto-deletes any orphaned local branches (including `<headRefName>` if the remote was deleted in step 7).
 
 9. **Confirm success** — print the merged PR title and confirm the base branch is up to date.

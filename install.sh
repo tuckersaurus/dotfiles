@@ -36,6 +36,16 @@ mkdir -p ~/.claude/commands
 for cmd in ~/dotfiles/claude/commands/*.md; do
     ln -sf "$cmd" ~/.claude/commands/"$(basename "$cmd")"
 done
+echo "Removing dangling Claude command symlinks..."
+for link in ~/.claude/commands/*.md; do
+    [ -L "$link" ] || continue
+    target="$(readlink "$link")"
+    case "$target" in
+        "$HOME"/dotfiles/claude/commands/*)
+            [ -e "$target" ] || rm "$link"
+            ;;
+    esac
+done
 echo "  done."
 
 echo "Symlinking .gitignore_global..."

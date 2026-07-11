@@ -1,3 +1,8 @@
+---
+description: Add a .NET project to an existing workspace, creating repo/project on disk if needed
+argument-hint: "[workspace=] [repo=] [project=] [type=] [schemas=] [push=] [visibility=]"
+---
+
 Add a .NET project to an existing workspace. Cascades: creates source repo / project on disk if needed; applies repo-level workspace patches if this source repo isn't already wired into the workspace.
 
 **Arguments:** `workspace=<owner>/<ws_repo>` (optional), `repo=<owner>/<repo>` (optional), `project=<name>` (optional), `type=app|library` (optional), `schemas=<s1>,<s2>` (optional), `push=false`, `visibility=private|public` (default `private`)

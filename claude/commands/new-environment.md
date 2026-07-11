@@ -1,3 +1,7 @@
+---
+description: Full guided flow to scaffold a complete workspace environment from scratch
+---
+
 Full guided flow for creating a complete workspace environment from scratch: collect all details interactively with silent lookups, scaffold everything on disk, then optionally push to GitHub.
 
 **Arguments:** none — all inputs are collected interactively.

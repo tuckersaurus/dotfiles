@@ -38,7 +38,7 @@ Always use the predefined skills for git operations — never run raw git comman
 
 - Branching → `/branch` skill
 - Committing → `/commit` skill
-- Opening pull requests → `/open-pr` skill
+- Opening pull requests → `/pull-request` skill
 - Merging pull requests → `/merge` skill
 
 This applies to **every repo** touched in a session, not just the primary working directory. When committing changes in a secondary repo (dotfiles, source repos, etc.), invoke `/commit` for that repo explicitly — do not run `git add` + `git commit` directly.
@@ -49,7 +49,7 @@ All repos, including `~/dotfiles`, use branches and PRs. Never commit directly t
 
 ## Custom Skills
 
-Custom skills (`/commit`, `/branch`, `/open-pr`, `/merge`, and any others in `~/.claude/commands/`) were written collaboratively, so their commands are implicitly trusted:
+Custom skills (`/commit`, `/branch`, `/pull-request`, `/merge`, and any others in `~/.claude/commands/`) were written collaboratively, so their commands are implicitly trusted:
 
 - **User-invoked skill** (`/commit`, `/branch`, etc.): run it immediately — no "are you sure" check, no permission prompts. The only interactions should be the skill's own questions (e.g. options, split-commit suggestions).
 - **Claude-invoked skill**: ask the user before invoking.

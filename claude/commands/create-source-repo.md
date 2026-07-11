@@ -1,3 +1,8 @@
+---
+description: Create a new bare source repository from the cookiecutter template
+argument-hint: "owner= repo="
+---
+
 Create a new bare **source repository** from the `project-repository` cookiecutter template. The source repo is the .NET project structure without any projects yet — use `/create-source-project` to add projects, or `/new-environment` for the full guided flow.
 
 **This skill is non-interactive.** All required data must be supplied as arguments. No questions are asked. No git or GitHub operations are performed — disk only.

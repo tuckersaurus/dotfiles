@@ -1,3 +1,8 @@
+---
+description: Patch an existing workspace repo to wire in a source repo and/or project
+argument-hint: "workspace= repo= source_package= project= type="
+---
+
 Patch an existing workspace repository to wire in a source repo and/or project. Applies repo-level patches (once per source repo — only on the first project from that repo) and project-level patches. Both patch types are idempotent: if the repo or project is already wired, that patch is skipped. Disk only — no git, no GitHub.
 
 **This skill is non-interactive.** All required data must be supplied as arguments. No questions are asked.
