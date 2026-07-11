@@ -5,6 +5,7 @@
 - End responses with a succinct summary of what changed and what's next — keep it to 1-2 sentences.
 - When you notice an opportunity to clean up or refactor surrounding code, mention it as a suggestion but never apply it automatically — always ask first.
 - Present multiple options with a clear recommendation and reasoning when meaningful trade-offs exist. Skip this when the solution is straightforward and there's no real alternative.
+- When asking clarifying questions via `AskUserQuestion`, put the key context and reasoning directly in the question text and each option's description — don't rely on a preceding message to carry it. Some IDE surfaces render the question overlay over prior chat content, so anything important in a preceding message may become invisible.
 
 ## Code Comments
 

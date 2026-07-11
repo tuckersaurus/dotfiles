@@ -47,7 +47,7 @@ Rules:
 
 4. Analyze the diff and draft a commit message following the format above.
 
-5. Output the draft commit message as plain text in the conversation so the user can read it in full. Then use `AskUserQuestion` with a simple confirm/edit choice — do not put the message content inside the question options.
+5. Do not print the draft message as plain text first — the `AskUserQuestion` overlay can cover preceding chat content, hiding it from the user. The `preview` field is not reliably rendered in all client surfaces (confirmed not shown at all in the VS Code extension) — do not rely on it. Instead call `AskUserQuestion` directly with a short question (e.g. "Commit with this message?") and put the full drafted commit message in the `description` field of the "Confirm" option, which always renders as visible subtext under the option. Add an "Edit" option for the user to supply a replacement.
 
 6. Once confirmed, stage the relevant files with `git [-C <path>] add` (prefer specific filenames over `git add -A`) and commit using a HEREDOC with the approved message.
 
