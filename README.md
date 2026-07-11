@@ -420,7 +420,7 @@ Since dotfiles already sources all `bash/*.sh` files (including `bash/node.sh`),
    }
    ```
 
-   `python3` and `mkdir` are required by the scaffold skills (`/new-source-project`, `/add-source-repo`, etc.) for package name derivation and directory creation. If the allowlist needs machine-specific additions, add them to `~/.claude/settings.local.json` — that file is not tracked in dotfiles.
+   `python3` and `mkdir` are required by the scaffold skills (`/scaffold-create-source-project`, `/scaffold-add-source-repo`, etc.) for package name derivation and directory creation. If the allowlist needs machine-specific additions, add them to `~/.claude/settings.local.json` — that file is not tracked in dotfiles.
 
 ---
 

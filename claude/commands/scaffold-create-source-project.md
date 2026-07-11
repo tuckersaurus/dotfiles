@@ -3,7 +3,7 @@ description: Create a .NET project inside an existing source repo (no workspace 
 argument-hint: "repo= project= type= [schemas=]"
 ---
 
-Create a .NET project inside an existing source repo. Updates the source repo's `package.json` workspaces. Does NOT patch workspace files — use `/add-source-project` to wire the project into a workspace.
+Create a .NET project inside an existing source repo. Updates the source repo's `package.json` workspaces. Does NOT patch workspace files — use `/scaffold-add-source-project` to wire the project into a workspace.
 
 **This skill is non-interactive.** All required data must be supplied as arguments. No questions are asked. No git or GitHub operations are performed — disk only.
 

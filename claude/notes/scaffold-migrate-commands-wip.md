@@ -1,5 +1,7 @@
 # WIP: /scaffold and /migrate Commands
 
+> **Update:** Mode A below (new project scaffold) was implemented as `/new-environment`, then later renamed to `/scaffold` — naming has converged with the original plan. Its 6 supporting skills (create/add source repo, create/add source project, create/update workspace repo) were also renamed to a `scaffold-` prefix so they group together in autocomplete. Mode B (create a workspace for an *existing* GitHub repo, via a dedicated repo-picker) is **not** built — `/scaffold` only does GitHub lookup as a fallback within its existing linear flow, not Mode B's separate `gh repo list` picker. `/migrate` is also still unbuilt. Both remain open below.
+
 ## What was done this session
 
 ### New: `templates/project-repository/` cookiecutter template

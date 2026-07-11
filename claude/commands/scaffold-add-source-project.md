@@ -7,7 +7,7 @@ Add a .NET project to an existing workspace. Cascades: creates source repo / pro
 
 **Arguments:** `workspace=<owner>/<ws_repo>` (optional), `repo=<owner>/<repo>` (optional), `project=<name>` (optional), `type=app|library` (optional), `schemas=<s1>,<s2>` (optional), `push=false`, `visibility=private|public` (default `private`)
 
-- `schemas` — PostgreSQL schemas for the project; passed through to `/create-source-project` if project doesn't exist yet
+- `schemas` — PostgreSQL schemas for the project; passed through to `/scaffold-create-source-project` if project doesn't exist yet
 
 **General non-interactive rule:** If all required args are provided, skip the confirmation step and proceed directly.
 
@@ -83,7 +83,7 @@ If **existing:** detect type from `.csproj` (`Sdk="Microsoft.NET.Sdk.Web"` → A
 If **new:**
 - `AskUserQuestion` — "ProjectName wasn't found. What would you like to do?" → `Create it (App)` / `Create it (Library)` / `Cancel`
 - Plain text: "Any PostgreSQL schemas? (comma-separated, e.g. zombie_miner — type 'none' for no schemas)"
-- Treat a response of `none` or `n` as no schemas — pass `schemas=` (empty string) to `/create-source-project`.
+- Treat a response of `none` or `n` as no schemas — pass `schemas=` (empty string) to `/scaffold-create-source-project`.
 - Flag project as `new (App)` or `new (Library)` with schemas stored — do not create yet.
 
 ### Step 4 — Idempotency check
@@ -123,19 +123,19 @@ git clone git@github.com:<owner>/<repo>.git \
 
 If repo is flagged `new (private)` or `new (public)`:
 ```
-/create-source-repo owner=<owner> repo=<repo>
+/scaffold-create-source-repo owner=<owner> repo=<repo>
 ```
 
 If project is flagged `new (App)` or `new (Library)`:
 ```
-/create-source-project repo=<owner>/<repo> project=<name> type=<app|library> schemas=<s1,s2>
+/scaffold-create-source-project repo=<owner>/<repo> project=<name> type=<app|library> schemas=<s1,s2>
 ```
 Pass `schemas=` (empty string) for no schemas.
 
 ### Step 8 — Patch workspace
 
 ```
-/update-workspace-repo workspace=<ws_owner>/<ws_repo> repo=<owner>/<repo> source_package=<source_package> project=<name> type=<app|library>
+/scaffold-update-workspace-repo workspace=<ws_owner>/<ws_repo> repo=<owner>/<repo> source_package=<source_package> project=<name> type=<app|library>
 ```
 
 ---
