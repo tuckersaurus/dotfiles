@@ -1,6 +1,6 @@
 ---
 description: Merge a pull request into its base branch
-argument-hint: "[pr-number] [--rebase|--merge]"
+argument-hint: "[pr-number] [--rebase|--merge] [--no-sync]"
 ---
 
 Merge a pull request into its base branch.
@@ -16,10 +16,11 @@ Merge a pull request into its base branch.
 - **No args** — find the open PR for the current branch and merge it
 - **PR number** (e.g. `/merge 42`) — merge that specific PR regardless of current branch
 - **Strategy override** — e.g. `/merge --rebase` or `/merge 42 --merge`
+- **Skip auto-sync** — `--no-sync` skips the `/sync --yes` call in step 8; omit (default) to run it as usual
 
 ## Steps
 
-1. Determine the git prefix: if a repo path argument was provided (e.g. `/merge ~/dotfiles 42`), use `git -C <path>` for all git commands. Otherwise use plain `git`.
+1. Determine the git prefix: if a repo path argument was provided (e.g. `/merge ~/dotfiles 42`), use `git -C <path>` for all git commands. Otherwise use plain `git`. Also check for `--no-sync` among the arguments — if present, step 8's `/sync --yes` call is skipped; otherwise (default) it runs as usual.
 
    **Derive the repo slug** from the remote URL:
    ```
@@ -61,6 +62,6 @@ Merge a pull request into its base branch.
 
    Swap `--squash` for `--rebase` or `--merge` if an override was passed.
 
-8. **Invoke `/sync --yes`** — switches to the base branch, pulls, and auto-deletes any orphaned local branches (including `<headRefName>` if the remote was deleted in step 7).
+8. **Invoke `/sync --yes`** — unless `--no-sync` was passed, switches to the base branch, pulls, and auto-deletes any orphaned local branches (including `<headRefName>` if the remote was deleted in step 7). Skip this step entirely if `--no-sync` was passed — print a short note that sync was skipped instead.
 
 9. **Confirm success** — print the merged PR title and confirm the base branch is up to date.
