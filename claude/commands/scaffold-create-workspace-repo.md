@@ -3,7 +3,7 @@ description: Create a new bare workspace repository from the cookiecutter templa
 argument-hint: "workspace_owner= ws_repository="
 ---
 
-Create a new bare **workspace repository** from the `workspace-repository` cookiecutter template. The workspace is the devcontainer + VS Code workspace config + solution stub that wires together one or more source repos. Source repos and projects are added later via `/add-source-repo` or `/new-environment`.
+Create a new bare **workspace repository** from the `workspace-repository` cookiecutter template. The workspace is the devcontainer + VS Code workspace config + solution stub that wires together one or more source repos. Source repos and projects are added later via `/scaffold-add-source-repo` or `/scaffold`.
 
 **This skill is non-interactive.** All required data must be supplied as arguments. No questions are asked. No git or GitHub operations are performed — disk only.
 

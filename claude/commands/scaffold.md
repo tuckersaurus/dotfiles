@@ -52,7 +52,7 @@ Ask as plain text:
 If **not found:** `AskUserQuestion` — "owner/repo wasn't found. What would you like to do?"
 - `Create it (private)` → flag repo as `new (private)`
 - `Create it (public)` → flag repo as `new (public)`
-- `Cancel` → quit `/new-environment` entirely
+- `Cancel` → quit `/scaffold` entirely
 
 If **found on disk:** flag as `existing` — no further questions for the repo itself; proceed to Step 3.
 
@@ -70,11 +70,11 @@ If the parent repo is `needs-clone`, skip the disk lookup and instead run the Gi
 If **not found:** `AskUserQuestion` — "ProjectName wasn't found. What would you like to do?"
 - `Create it (App)` → flag project as `new (App)`
 - `Create it (Library)` → flag project as `new (Library)`
-- `Cancel` → quit `/new-environment` entirely
+- `Cancel` → quit `/scaffold` entirely
 
 If creating: plain text: "Any PostgreSQL schemas? (comma-separated, e.g. my_app, security — type 'none' for no schemas)"
 
-Treat a response of `none` or `n` as no schemas — pass `schemas=` (empty string) to `/create-source-project`.
+Treat a response of `none` or `n` as no schemas — pass `schemas=` (empty string) to `/scaffold-create-source-project`.
 
 If **found:** flag as `existing` — no further questions for this project.
 
@@ -123,14 +123,14 @@ git clone git@github.com:<owner>/<repo>.git \
 ### Step 7 — Create workspace
 
 ```
-/create-workspace-repo workspace_owner=tuckersaurus ws_repository=<ws_repository>
+/scaffold-create-workspace-repo workspace_owner=tuckersaurus ws_repository=<ws_repository>
 ```
 
 ### Step 8 — Create new source repos
 
 For each repo flagged `new (private)` or `new (public)`:
 ```
-/create-source-repo owner=<owner> repo=<repo>
+/scaffold-create-source-repo owner=<owner> repo=<repo>
 ```
 Skip repos flagged `existing` or `existing, needs-clone`.
 
@@ -138,7 +138,7 @@ Skip repos flagged `existing` or `existing, needs-clone`.
 
 For each project flagged `new (App)` or `new (Library)`:
 ```
-/create-source-project repo=<owner>/<repo> project=<name> type=<app|library> schemas=<s1,s2>
+/scaffold-create-source-project repo=<owner>/<repo> project=<name> type=<app|library> schemas=<s1,s2>
 ```
 Pass `schemas=` (empty string) for projects with no schemas. Skip projects flagged `existing`.
 
@@ -146,7 +146,7 @@ Pass `schemas=` (empty string) for projects with no schemas. Skip projects flagg
 
 For every project across all source repos (both `new` and `existing`):
 ```
-/update-workspace-repo workspace=<owner>/<ws_repository> repo=<owner>/<repo> source_package=<repo_name> project=<name> type=<app|library>
+/scaffold-update-workspace-repo workspace=<owner>/<ws_repository> repo=<owner>/<repo> source_package=<repo_name> project=<name> type=<app|library>
 ```
 where `source_package` is the part after `/` in `<owner>/<repo>`. Call once per project — the skill handles repo-level patches automatically on the first project from each repo.
 

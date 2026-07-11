@@ -90,7 +90,7 @@ Otherwise, for each project:
    If **new:**
    - `AskUserQuestion` — "ProjectName wasn't found. What would you like to do?" → `Create it (App)` / `Create it (Library)` / `Cancel`
    - Plain text: "Any PostgreSQL schemas? (comma-separated, e.g. zombie_miner — type 'none' for no schemas)"
-   - Treat a response of `none` or `n` as no schemas — pass `schemas=` (empty string) to `/create-source-project`.
+   - Treat a response of `none` or `n` as no schemas — pass `schemas=` (empty string) to `/scaffold-create-source-project`.
    - Flag project as `new (App)` or `new (Library)` with schemas stored — do not create yet.
 
 3. `AskUserQuestion` — "What next?" → `Add another project` / `Done`
@@ -129,7 +129,7 @@ git clone git@github.com:<owner>/<repo>.git \
 
 If repo is flagged `new`:
 ```
-/create-source-repo owner=<owner> repo=<repo>
+/scaffold-create-source-repo owner=<owner> repo=<repo>
 ```
 Skip if flagged `existing` or `existing, needs-clone`.
 
@@ -137,7 +137,7 @@ Skip if flagged `existing` or `existing, needs-clone`.
 
 For each project flagged `new (App)` or `new (Library)`:
 ```
-/create-source-project repo=<owner>/<repo> project=<name> type=<app|library> schemas=<s1,s2>
+/scaffold-create-source-project repo=<owner>/<repo> project=<name> type=<app|library> schemas=<s1,s2>
 ```
 Pass `schemas=` (empty string) for no schemas. Skip projects flagged `existing`.
 
@@ -145,7 +145,7 @@ Pass `schemas=` (empty string) for no schemas. Skip projects flagged `existing`.
 
 For each project (both `new` and `existing`):
 ```
-/update-workspace-repo workspace=<ws_owner>/<ws_repo> repo=<owner>/<repo> source_package=<source_package> project=<name> type=<app|library>
+/scaffold-update-workspace-repo workspace=<ws_owner>/<ws_repo> repo=<owner>/<repo> source_package=<source_package> project=<name> type=<app|library>
 ```
 
 ---
