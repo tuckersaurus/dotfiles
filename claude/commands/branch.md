@@ -1,3 +1,8 @@
+---
+description: Create a new git branch with a consistent, type-prefixed name
+argument-hint: "[repo-path]"
+---
+
 Create a new git branch with a consistent name derived from the branch's purpose.
 
 Accepts an optional repo path argument (e.g. `/branch ~/dotfiles`). If provided, all git commands run with `git -C <path>`. If omitted, operates on the current working directory.

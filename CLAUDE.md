@@ -22,13 +22,8 @@ Personal dotfiles and development environment configuration.
 
 ## install.sh Notes
 
-`install.sh` creates symlinks with `ln -sf` — it does **not** remove stale symlinks when source files are renamed. After renaming or deleting a file that was previously symlinked, manually remove the stale link:
-
-```bash
-find ~/.claude/commands -maxdepth 1 -name "*.md" -type l | while read link; do
-  target=$(readlink "$link")
-  if [ ! -f "$target" ]; then rm "$link"; fi
-done
-```
-
-Then re-run `bash ~/dotfiles/install.sh`.
+`install.sh` creates symlinks with `ln -sf` and automatically removes any
+`~/.claude/commands/*.md` symlink that points into this repo's
+`claude/commands/` but whose target no longer exists (e.g. after a skill is
+renamed or deleted). Re-run `bash ~/dotfiles/install.sh` after any such
+change to apply both the new links and the cleanup in one pass.

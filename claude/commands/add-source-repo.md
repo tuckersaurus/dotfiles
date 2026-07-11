@@ -1,3 +1,8 @@
+---
+description: Add a source repo and its projects to an existing workspace
+argument-hint: "[workspace=] [repo=] [projects=] [push=] [visibility=]"
+---
+
 Add a source repo (with its projects) to an existing workspace. Creates the source repo and/or projects on disk if needed. Patches all workspace config files.
 
 **Arguments:** `workspace=<owner>/<ws_repo>` (optional), `repo=<owner>/<repo>` (optional), `projects=<name>:<type>[,<name>:<type>]` (optional), `push=false`, `visibility=private|public` (default `private`)

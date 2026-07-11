@@ -1,6 +1,11 @@
+---
+description: Switch to main, pull latest, and delete orphaned local branches
+argument-hint: "[repo-path] [--yes]"
+---
+
 Clean up the local git repo: switch to main, pull latest, and delete any local branches whose remote tracking branch has been deleted.
 
-Accepts an optional repo path argument (e.g. `/tidy ~/dotfiles`). If provided, all git commands run with `git -C <path>`. If omitted, operates on the current working directory.
+Accepts an optional repo path argument (e.g. `/sync ~/dotfiles`). If provided, all git commands run with `git -C <path>`. If omitted, operates on the current working directory.
 
 ## Arguments
 

@@ -227,6 +227,7 @@ The installer does the following:
 - Symlinks `~/.gitconfig` → `~/dotfiles/.gitconfig`
 - Symlinks `~/.gitignore_global` → `~/dotfiles/.gitignore_global`
 - Symlinks `~/.claude/CLAUDE.md`, `settings.json`, and all `commands/*.md`
+- Removes dangling `~/.claude/commands/*.md` symlinks left behind by renamed/deleted skills
 - Injects the dotfiles source block into `~/.bashrc`
 - Installs `cookiecutter` via pip
 - Adds `~/dotfiles/scripts/` to `PATH`, providing `git-consolidate` and `git-delete` helper scripts
